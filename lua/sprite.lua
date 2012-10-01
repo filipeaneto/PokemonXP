@@ -15,7 +15,7 @@ setmetatable(Sprite, {
         local obj = {
             animating       = spriteData.animating,
             animation       = {},
-            currentAnimation= spriteData.firstAnimation,
+            currentAnimation= spriteData.animations[1].name,
             
             rotateByPosition= spriteData.rotating,
             rotation        = 0,
@@ -30,7 +30,7 @@ setmetatable(Sprite, {
         }
         
         if spriteData.animating then
-            for i = 1, spriteData.animationCount do
+            for i = 1, #spriteData.animations do
                 obj.animation[spriteData.animations[i].name] =
                     Animation(imageData, spriteData.animations[i].x,
                               spriteData.animations[i].y,
@@ -63,13 +63,18 @@ function Sprite:setPosition(x, y)
 end
 
 function Sprite:setPosition(position)
-    if #position ~= 2 then return false end
+    if position.x ~= nil and position.y ~= nil then return false end
     
     self.lastPosition = self.position
     self.position = position
     self:updateRotation()
     
     return true
+end
+
+function Sprite:setAnimation(animation)
+    self.animation[self.currentAnimation].playCount = 0
+    self.currentAnimation = animation
 end
 
 function Sprite:update(dt)
