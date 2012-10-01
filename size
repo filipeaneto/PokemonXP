@@ -1,2 +1,0 @@
-#!/bin/sh
-ls -lah PokemonXD.love | awk '{ print $5}'

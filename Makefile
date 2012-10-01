@@ -1,10 +1,9 @@
-SIZE := $(shell ./size)
-
 all:
-	zip -r9 -FS PokemonXD.love *.lua data lua
+	zip -r9 -FS PokemonXP.love *.lua data lua
+	@ ls -lha PokemonXP.love
 	@ echo $(SIZE) "->"
-	@ ./size
+	@ ls -lha PokemonXP.love
 
 clean:
-	rm PokemonXD.love
+	rm PokemonXP.love
 
