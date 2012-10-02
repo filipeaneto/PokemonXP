@@ -6,10 +6,10 @@ Sprite = {}
 -- Constructor
 setmetatable(Sprite, {
     __call = function(table, filename)
-        local chunk = love.filesystem.load(Game.GetSpritePath() .. filename)
+        local chunk = love.filesystem.load(game:getSpritePath() .. filename)
         local spriteData = chunk()
 
-        local imageData = love.image.newImageData(Game.GetImagePath() ..
+        local imageData = love.image.newImageData(game:getImagePath() ..
                                                   spriteData.imageFilename)
 
         local obj = {
@@ -20,8 +20,8 @@ setmetatable(Sprite, {
             rotateByPosition= spriteData.rotating,
             rotation        = 0,
             
-            position        = {x = 0, y = 0},
-            lastPosition    = {x = 0, y = 0},
+            position        = Vec2(),
+            lastPosition    = Vec2(),
             
             width           = spriteData.width,
             height          = spriteData.height,
@@ -58,18 +58,22 @@ function Sprite:getCurrentFrameAnimation()
 end
 
 function Sprite:setPosition(x, y)
-    if #x ~= 1 or #y ~= 1 then return false end
-    return self:setPosition({x = x, y = y})
-end
-
-function Sprite:setPosition(position)
-    if position.x ~= nil and position.y ~= nil then return false end
+    local position
+    if y == nil then position = x else position = Vec2(x, y) end
     
     self.lastPosition = self.position
     self.position = position
     self:updateRotation()
     
     return true
+end
+
+function Sprite:getPosition(cood)
+    if cood == nil then
+        return self.position
+    else
+        return self.position[cood]
+    end
 end
 
 function Sprite:setAnimation(animation)
