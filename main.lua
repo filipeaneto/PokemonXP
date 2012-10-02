@@ -9,32 +9,39 @@ function love.load()
     game:start()
 
     sprite = Sprite("hero.spr")
-    object = Object(sprite)
+    object = Object(sprite, 3)
+    
+    limitKey = 0
 end
 
 function love.update(dt)
     game:update(dt)
     
-    if love.keyboard.isDown("a") then
+    limitKey = limitKey + dt
     
-        object:move(-1, 0)
-        object:getSprite():setAnimation("walking_left")
+    if limitKey > 0.8 then
+        if love.keyboard.isDown("a") then
         
-    elseif love.keyboard.isDown("s") then
-    
-        object:move(0, 1)
-        object:getSprite():setAnimation("walking_down")
-    
-    elseif love.keyboard.isDown("d") then
-    
-        object:move(1, 0)
-        object:getSprite():setAnimation("walking_right")
-    
-    elseif love.keyboard.isDown("w") then
-    
-        object:move(0, -1)
-        object:getSprite():setAnimation("walking_up")
-    
+            object:move(-1, 0)
+            object:getSprite():setAnimation("walking_left")
+            
+        elseif love.keyboard.isDown("s") then
+        
+            object:move(0, 1)
+            object:getSprite():setAnimation("walking_down")
+        
+        elseif love.keyboard.isDown("d") then
+        
+            object:move(1, 0)
+            object:getSprite():setAnimation("walking_right")
+        
+        elseif love.keyboard.isDown("w") then
+        
+            object:move(0, -1)
+            object:getSprite():setAnimation("walking_up")
+        
+        end
+        limitKey = 0
     end
 
     object:update(dt)
@@ -61,6 +68,27 @@ end
 function love.keypressed(key, unicode)
     if key == "escape" then
         love.event.quit()
+    
+--    elseif key == "a" then
+--    
+--        object:move(-1, 0)
+--        object:getSprite():setAnimation("walking_left")
+--        
+--    elseif key == "s" then
+--    
+--        object:move(0, 1)
+--        object:getSprite():setAnimation("walking_down")
+--    
+--    elseif key == "d" then
+--    
+--        object:move(1, 0)
+--        object:getSprite():setAnimation("walking_right")
+--    
+--    elseif key == "w" then
+--    
+--        object:move(0, -1)
+--        object:getSprite():setAnimation("walking_up")
+--    
     end
 end
 

@@ -57,13 +57,14 @@ function Sprite:getCurrentFrameAnimation()
     return animations[currentAnimation]
 end
 
-function Sprite:setPosition(x, y)
+function Sprite:setPosition(x, y, teleport)
     local position
-    if y == nil then position = x else position = Vec2(x, y) end
+    if y == nil then position = Vec2(x.x, x.y) else position = Vec2(x, y) end
     
     self.lastPosition = self.position
     self.position = position
-    self:updateRotation()
+    
+    if teleport == nil then self:updateRotation() end
     
     return true
 end
