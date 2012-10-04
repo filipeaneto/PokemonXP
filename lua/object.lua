@@ -1,5 +1,6 @@
 require("lua/game")
 require("lua/vec2")
+require("lua/list")
 require("math")
 
 Object = {}
@@ -9,7 +10,10 @@ setmetatable(Object, {
         obj = {
             sprite      = sprite,
             dPosition   = Vec2(sprite:getPosition().x, sprite:getPosition().y),
-            speed       = speed or 1
+            speed       = speed or 32,
+            movements   = List(),
+            isMoving    = false,
+            deltaStep   = 2
         }
         
         setmetatable(obj, { __index = Object })
@@ -22,23 +26,41 @@ function Object:draw()
 end
 
 function Object:update(dt)
-    local position = self.sprite:getPosition()
-    local dp = (position - self.dPosition)
+    if self.isMoving then    
+        local position = self.sprite:getPosition()
+        local dp = (position - self.dPosition)
+        local norm = dp:norm()
+        
+        dp = dt * self.speed * (dp:normalized()) 
+        
+        if norm < self.deltaStep then
+            print("aqui")
+            self.isMoving = false
+        end
+        self.sprite:setPosition(position - dp)
+        
+    elseif not self.movements:isEmpty() then
+        local mov = self.movements:popLeft()
+        local dv, animation = mov.vector, mov.animation
+        
+        if animation ~= nil then self.sprite:setAnimation(animation) end
     
-    if dp:norm() > self.speed then dp = self.speed * (dp:normalized()) end
+        dv.x, dv.y = math.floor(dv.x), math.floor(dv.y)
+
+        self.dPosition.x = self.dPosition.x + dv.x * game:getGrid().x
+        self.dPosition.y = self.dPosition.y + dv.y * game:getGrid().y
+        
+        self.isMoving = true   
+    end
     
-    self.sprite:setPosition(position - dp)
     self.sprite:update(dt)
 end
 
-function Object:move(dx, dy)
+function Object:move(dx, dy, animation)
     local dv = {}
     if dy == nil then dv = Vec2(dx) else dv = Vec2(dx, dy) end
 
-    dv.x, dv.y = math.floor(dv.x), math.floor(dv.y)
-
-    self.dPosition.x = self.dPosition.x + dv.x * game:getGrid().x
-    self.dPosition.y = self.dPosition.y + dv.y * game:getGrid().y
+    self.movements:pushRight({ vector = dv, animation = animation})
 end
 
 
