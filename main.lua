@@ -5,14 +5,16 @@ require("lua/game")
 
 function love.load()
     game = Game()
+    imageBank= {}
     
     game:setFPS(24)
 
     game:start()
 
-    object = Object(Sprite("hero.spr"), 96)
-    object.deltaStep = 16
+    object = Object(Sprite("hero.spr"), 96, 16)
     
+    test = Sprite("hero.spr")
+    abra = Sprite("default32_movement5.spr", "pokemon/063_movement.png")
     
     limitKey = 0
 end
@@ -22,7 +24,7 @@ function love.update(dt)
     
     limitKey = limitKey + dt
     
-    if limitKey > 1 then
+    if limitKey > 0.8 then
         if love.keyboard.isDown("a") then
         
             object:move(-1, 0, "walking_left")
@@ -48,13 +50,17 @@ function love.update(dt)
     end
 
     object:update(dt)
+    abra:update(dt)
 end
 
 function love.draw()
     love.graphics.print("FPS: "..tostring(love.timer.getFPS( )), 10, 10)
+    local mem = collectgarbage ("count")
+    love.graphics.print("Memory: "..math.floor(mem).." KB", 10, 20)
 
     love.graphics.print("Hello World", 400, 300)
     object:draw()
+    abra:draw()
     
     -- Control FPS
     game:wait()
@@ -71,6 +77,12 @@ end
 function love.keypressed(key, unicode)
     if key == "escape" then
         love.event.quit()
+    elseif key == "w" then
+        abra:setAnimation("n")
+    elseif key == "s" then
+        abra:setAnimation("s")
+    elseif key == "a" then
+        abra:setAnimation("w")    
     end
 end
 

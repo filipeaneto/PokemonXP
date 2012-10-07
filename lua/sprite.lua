@@ -5,40 +5,54 @@ require("math")
 Sprite = {}
 -- Constructor
 setmetatable(Sprite, {
-    __call = function(table, filename)
+    __call = function(table, filename, imageFilename)
+        print("creating: sprite: " .. filename)
         local chunk = love.filesystem.load(game:getSpritePath() .. filename)
         local spriteData = chunk()
+        
+        spriteData.imageFilename = imageFilename or spriteData.imageFilename
+        
+        if imageBank[spriteData.imageFilename] == nil then 
+            print("imageBank: "..spriteData.imageFilename.." missing")
+            print("image: "..spriteData.imageFilename.." opened")
+        else
+            print("imageBank: "..spriteData.imageFilename.." is already opened")
+            print("image: "..spriteData.imageFilename.." loaded")
+        end
+        
+        local image = imageBank[spriteData.imageFilename] or
+            love.graphics.newImage(game:getImagePath() .. spriteData.imageFilename)
 
-        local imageData = love.image.newImageData(game:getImagePath() ..
-                                                  spriteData.imageFilename)
+        imageBank[spriteData.imageFilename] = image
+        
 
         local obj = {
+            image           = image,
+
             animating       = spriteData.animating,
             animation       = {},
             currentAnimation= spriteData.animations[1].name,
-            
+
             rotateByPosition= spriteData.rotating,
             rotation        = 0,
-            
+
             position        = Vec2(),
             lastPosition    = Vec2(),
-            
+
             width           = spriteData.width,
             height          = spriteData.height,
 
             center          = {spriteData.width / 2, spriteData.height / 2}
         }
-        
-        if spriteData.animating then
-            for i = 1, #spriteData.animations do
-                obj.animation[spriteData.animations[i].name] =
-                    Animation(imageData, spriteData.animations[i].x,
-                              spriteData.animations[i].y,
-                              obj.width, obj.height,
-                              spriteData.animations[i].frameCount,
-                              spriteData.animations[i].frameLength,
-                              spriteData.animations[i].nextAnimation)
-            end
+
+        for i = 1, #spriteData.animations do
+            obj.animation[spriteData.animations[i].name] =
+                Animation(image, spriteData.animations[i].x,
+                          spriteData.animations[i].y,
+                          obj.width, obj.height,
+                          spriteData.animations[i].frameCount,
+                          spriteData.animations[i].frameLength,
+                          spriteData.animations[i].nextAnimation)
         end
         
         setmetatable(obj, { __index = Sprite })
@@ -48,7 +62,7 @@ setmetatable(Sprite, {
 
 function Sprite:updateRotation()
     if self.rotateByPosition then
-        rotation = math.atan2(position.y - lastPosition.y, 
+        rotation = math.atan2(position.y - lastPosition.y,
                               position.x - lastPosition.x)
     end
 end
@@ -60,12 +74,12 @@ end
 function Sprite:setPosition(x, y, teleport)
     local position
     if y == nil then position = Vec2(x.x, x.y) else position = Vec2(x, y) end
-    
+
     self.lastPosition = self.position
     self.position = position
-    
+
     if teleport == nil then self:updateRotation() end
-    
+
     return true
 end
 
@@ -85,18 +99,19 @@ end
 function Sprite:update(dt)
     if self.animating then
         self.animation[self.currentAnimation]:update(dt)
-        
+
         if self.animation[self.currentAnimation].nextAnimation ~= nil then
             if self.animation[self.currentAnimation].playCount > 0 then
                 self.animation[self.currentAnimation].playCount = 0
-                self.currentAnimation = 
+                self.currentAnimation =
                     self.animation[self.currentAnimation].nextAnimation
             end
         end
     end
 end
-   
+
 function Sprite:draw()
-    love.graphics.draw(self.animation[self.currentAnimation]:getImage(),
+    love.graphics.drawq(self.image, self.animation[self.currentAnimation]:getQuad(),
                        self.position.x, self.position.y)
 end
+

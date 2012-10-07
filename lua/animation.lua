@@ -1,11 +1,11 @@
 Animation = {}
 -- Constructor
 setmetatable(Animation, {
-    __call = function(table, imageData, x, y, width, height, 
+    __call = function(table, image, x, y, width, height, 
                       frameCount, frameLength, nextAnimation)
         
         local obj = {
-            images              = {},
+            quads               = {},
 
             frameCount          = frameCount,
             currentFrame        = 0,
@@ -19,10 +19,14 @@ setmetatable(Animation, {
         }
         
         for i = 0, frameCount-1 do
-            local frameData = love.image.newImageData(width, height)
-            frameData:paste(imageData, 0, 0, x + i * width, y, width, height)
-            
-            obj.images[i + 1] = love.graphics.newImage(frameData)
+--            local frameData = love.image.newImageData(width, height)
+--            frameData:paste(imageData, 0, 0, x + i * width, y, width, height)
+--            
+--            obj.images[i + 1] = love.graphics.newImage(frameData)
+            obj.quads[i + 1] = love.graphics.newQuad(
+                x + i * width, y, width, height, 
+                image:getWidth(), image:getHeight()
+            )
         end
         
         setmetatable(obj, { __index = Animation })
@@ -43,6 +47,10 @@ function Animation:update(dt)
     end
 end
 
-function Animation:getImage()
-    return self.images[self.currentFrame + 1]
+--function Animation:getImage()
+--    return self.images[self.currentFrame + 1]
+--end
+
+function Animation:getQuad()
+    return self.quads[self.currentFrame + 1]
 end

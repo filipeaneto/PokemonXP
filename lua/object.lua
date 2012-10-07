@@ -6,14 +6,14 @@ require("math")
 Object = {}
 
 setmetatable(Object, {
-    __call = function(table, sprite, speed)
+    __call = function(table, sprite, speed, deltaStep)
         obj = {
             sprite      = sprite,
             dPosition   = Vec2(sprite:getPosition().x, sprite:getPosition().y),
             speed       = speed or 32,
             movements   = List(),
             isMoving    = false,
-            deltaStep   = 2
+            deltaStep   = deltaStep or 2
         }
         
         setmetatable(obj, { __index = Object })
@@ -34,7 +34,6 @@ function Object:update(dt)
         dp = dt * self.speed * (dp:normalized()) 
         
         if norm < self.deltaStep then
-            print("aqui")
             self.isMoving = false
         end
         self.sprite:setPosition(position - dp)
