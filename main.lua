@@ -11,7 +11,7 @@ function love.load()
 
     game:start()
 
-    object = Object(Sprite("hero.spr"), 96, 16)
+    object = Object(Sprite("hero.spr"), 90, 4)
     
     test = Sprite("hero.spr")
     abra = Sprite("default32_movement5.spr", "pokemon/063_movement.png")
@@ -97,3 +97,4 @@ end
 function love.quit()
 
 end
+

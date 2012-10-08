@@ -9,22 +9,22 @@ setmetatable(Sprite, {
         print("creating: sprite: " .. filename)
         local chunk = love.filesystem.load(game:getSpritePath() .. filename)
         local spriteData = chunk()
-        
+
         spriteData.imageFilename = imageFilename or spriteData.imageFilename
-        
-        if imageBank[spriteData.imageFilename] == nil then 
+
+        if imageBank[spriteData.imageFilename] == nil then
             print("imageBank: "..spriteData.imageFilename.." missing")
             print("image: "..spriteData.imageFilename.." opened")
         else
             print("imageBank: "..spriteData.imageFilename.." is already opened")
             print("image: "..spriteData.imageFilename.." loaded")
         end
-        
+
         local image = imageBank[spriteData.imageFilename] or
             love.graphics.newImage(game:getImagePath() .. spriteData.imageFilename)
 
         imageBank[spriteData.imageFilename] = image
-        
+
 
         local obj = {
             image           = image,
@@ -54,7 +54,7 @@ setmetatable(Sprite, {
                           spriteData.animations[i].frameLength,
                           spriteData.animations[i].nextAnimation)
         end
-        
+
         setmetatable(obj, { __index = Sprite })
         return obj
     end
@@ -67,8 +67,8 @@ function Sprite:updateRotation()
     end
 end
 
-function Sprite:getCurrentFrameAnimation()
-    return animations[currentAnimation]
+function Sprite:getCurrentAnimation()
+    return self.animation[self.currentAnimation]
 end
 
 function Sprite:setPosition(x, y, teleport)
@@ -92,26 +92,25 @@ function Sprite:getPosition(cood)
 end
 
 function Sprite:setAnimation(animation)
-    self.animation[self.currentAnimation].playCount = 0
+    self:getCurrentAnimation().playCount = 0
     self.currentAnimation = animation
 end
 
 function Sprite:update(dt)
     if self.animating then
-        self.animation[self.currentAnimation]:update(dt)
+        local animation = self:getCurrentAnimation()
+        animation:update(dt)
 
-        if self.animation[self.currentAnimation].nextAnimation ~= nil then
-            if self.animation[self.currentAnimation].playCount > 0 then
-                self.animation[self.currentAnimation].playCount = 0
-                self.currentAnimation =
-                    self.animation[self.currentAnimation].nextAnimation
+        if animation.nextAnimation ~= nil then
+            if animation.playCount > 0 then
+                animation.playCount = 0
+                self.currentAnimation = animation.nextAnimation
             end
         end
     end
 end
 
 function Sprite:draw()
-    love.graphics.drawq(self.image, self.animation[self.currentAnimation]:getQuad(),
-                       self.position.x, self.position.y)
+    self.animation[self.currentAnimation]:draw(self.position.x, self.position.y)
 end
 

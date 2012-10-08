@@ -66,3 +66,4 @@ end
 function Object:getSprite()
     return self.sprite
 end
+
