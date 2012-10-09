@@ -1,3 +1,4 @@
+require("lua/imagebank")
 require("lua/keyboard")
 require("lua/sprite")
 require("lua/object")
@@ -5,7 +6,7 @@ require("lua/game")
 
 function love.load()
     game = Game()
-    imageBank= {}
+    imageBank= ImageBank(50)
     
     game:setFPS(24)
 
@@ -13,7 +14,6 @@ function love.load()
 
     object = Object(Sprite("hero.spr"), 90, 4)
     
-    test = Sprite("hero.spr")
     abra = Sprite("default32_movement5.spr", "pokemon/063_movement.png")
     
     limitKey = 0
