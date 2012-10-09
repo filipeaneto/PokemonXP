@@ -14,7 +14,7 @@ release/data.zip: data
 #	@cat /usr/bin/love release/PokemonXP.love > release/pokemonxp
 
 release/PokemonXP.Windows.zip: release/.tmp/PokemonXP.exe
-	zip -j9 -FS release/PokemonXP.Windows.zip release/.tmp/*.dll release/.tmp/PokemonXP.exe
+	zip -j9 -FS release/PokemonXP.Windows.zip release/.tmp/*.dll release/.tmp/PokemonXP.exe readme.txt gpl.txt
 
 release/.tmp/PokemonXP.exe: release/PokemonXP.love
 	cat release/.tmp/love.exe release/PokemonXP.love > release/.tmp/PokemonXP.exe
