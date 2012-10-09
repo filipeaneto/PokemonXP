@@ -1,5 +1,4 @@
 require("lua/imagebank")
-require("lua/keyboard")
 require("lua/sprite")
 require("lua/object")
 require("lua/game")
