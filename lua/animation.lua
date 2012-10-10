@@ -1,12 +1,15 @@
 Animation = {}
 -- Constructor
 setmetatable(Animation, {
-    __call = function(table, image, x, y, width, height,
+    __call = function(table, image, x, y, mirror, width, height,
                       frameCount, frameLength, nextAnimation)
 
         local obj = {
             image               = image,
             quads               = {},
+
+            scale               = { x = 1, y = 1 },
+            center              = { x = width/2, y = height/2 },
 
             frameCount          = frameCount,
             currentFrame        = 0,
@@ -25,6 +28,9 @@ setmetatable(Animation, {
                 image:getWidth(), image:getHeight()
             )
         end
+
+        if mirror.x then obj.scale.x = - obj.scale.x end
+        if mirror.y then obj.scale.y = - obj.scale.y end
 
         setmetatable(obj, { __index = Animation })
         return obj
@@ -49,6 +55,8 @@ function Animation:getQuad()
 end
 
 function Animation:draw(x, y)
-    love.graphics.drawq(self.image, self:getQuad(), x, y)
+    love.graphics.drawq(self.image, self:getQuad(), x, y, 0,
+                        self.scale.x, self.scale.y,
+                        self.center.x, self.center.y)
 end
 

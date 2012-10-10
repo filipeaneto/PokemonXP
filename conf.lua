@@ -1,5 +1,5 @@
 function love.conf(t)
-    t.title = "PokemonXP"       -- The title of the window the game is in (string)
+    t.title = "PokémonXP"       -- The title of the window the game is in (string)
     t.author = "Filipe Neto"    -- The author of the game (string)
     t.url = nil                 -- The website of the game (string)
     t.identity = nil            -- The name of the save directory (string)
@@ -22,3 +22,4 @@ function love.conf(t)
     t.modules.sound = true      -- Enable the sound module (boolean)
     t.modules.physics = false   -- Enable the physics module (boolean)
 end
+

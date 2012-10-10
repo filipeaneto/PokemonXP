@@ -46,13 +46,15 @@ setmetatable(Sprite, {
         }
 
         for i = 1, #spriteData.animations do
-            obj.animation[spriteData.animations[i].name] =
-                Animation(image, spriteData.animations[i].x,
-                          spriteData.animations[i].y,
+            local iAnimation = spriteData.animations[i]
+
+            obj.animation[iAnimation.name] =
+                Animation(image, iAnimation.x, iAnimation.y,
+                          { x = iAnimation.mirrorX, y = iAnimation.mirrorY },
                           obj.width, obj.height,
-                          spriteData.animations[i].frameCount,
-                          spriteData.animations[i].frameLength,
-                          spriteData.animations[i].nextAnimation)
+                          iAnimation.frameCount,
+                          iAnimation.frameLength,
+                          iAnimation.nextAnimation)
         end
 
         setmetatable(obj, { __index = Sprite })
