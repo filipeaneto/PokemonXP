@@ -18,6 +18,7 @@
    along with PokémonXP. If not, see <http://www.gnu.org/licenses/>.
 ]]
 
+require("lua/naivebayes")
 require("lua/imagebank")
 require("lua/sprite")
 require("lua/object")
@@ -31,6 +32,7 @@ function love.load()
 
     xpGame:start()
 
+    collectgarbage("stop")
 
     abra = Sprite("default32_movement5.spr", "pokemon/063_movement.png")
     abra:setPosition(64, 64)
@@ -40,6 +42,25 @@ function love.load()
     hero = Sprite("hero.spr")
 
     limitKey = 0
+    
+    
+    -- testando NaiveBayesClassifier
+    classifier = NaiveBayesClassifier(4)
+    classifier:insertClass("yes")
+    classifier:insertClass("no")
+    
+    classifier:insertData({"yes", "red", "sports", "domestic"}) -- 1
+    classifier:insertData({"no",  "red", "sports", "domestic"})
+    classifier:insertData({"yes", "red", "sports", "domestic"}) -- 3
+    classifier:insertData({"no",  "yel", "sports", "domestic"})
+    classifier:insertData({"yes", "yel", "sports", "imported"}) -- 5
+    classifier:insertData({"no",  "yel", "SUV",    "imported"}) 
+    classifier:insertData({"yes", "yel", "SUV",    "imported"}) -- 7
+    classifier:insertData({"no",  "yel", "SUV",    "domestic"})
+    classifier:insertData({"no",  "red", "SUV",    "imported"}) -- 9
+    classifier:insertData({"yes", "red", "sports", "imported"})
+    
+    result = classifier:classify({"red", "SUV", "domestic"})
 end
 
 function love.update(dt)
@@ -86,7 +107,7 @@ function love.draw()
         love.graphics.print("Memory: "..math.floor(mem).." KB", 10, 20)
     end
 
-    love.graphics.print("Hello World", 400, 300)
+    love.graphics.print("Hello World: "..(result or "cagou"), 400, 300)
     object:draw()
     abra:draw()
 
@@ -105,6 +126,8 @@ end
 function love.keypressed(key, unicode)
     if key == "escape" then
         love.event.quit()
+    elseif key == "g" then
+        collectgarbage()
 --    elseif key == "w" then
 --        abra:setAnimation("n")
 --    elseif key == "s" then
