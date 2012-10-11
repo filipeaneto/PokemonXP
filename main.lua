@@ -24,45 +24,48 @@ require("lua/object")
 require("lua/game")
 
 function love.load()
-    game = Game()
-    imageBank= ImageBank(50)
+    xpGame = Game()
+    xpImageBank= ImageBank(50)
 
-    game:setFPS(24)
+    xpGame:setFPS(24)
 
-    game:start()
+    xpGame:start()
 
-    object = Object(Sprite("hero.spr"), 90, 4)
 
     abra = Sprite("default32_movement5.spr", "pokemon/063_movement.png")
     abra:setPosition(64, 64)
+
+    object = Object(abra, 40, 4)
+
+    hero = Sprite("hero.spr")
 
     limitKey = 0
 end
 
 function love.update(dt)
-    game:update(dt)
+    xpGame:update(dt)
 
     limitKey = limitKey + dt
 
     if limitKey > 0.8 then
         if love.keyboard.isDown("a") then
 
-            object:move(-1, 0, "walking_left")
+            object:move(-1, 0, "w")
 --            object:getSprite():setAnimation("walking_left")
 
         elseif love.keyboard.isDown("s") then
 
-            object:move(0, 1, "walking_down")
+            object:move(0, 1, "s")
 --            object:getSprite():setAnimation("walking_down")
 
         elseif love.keyboard.isDown("d") then
 
-            object:move(1, 0, "walking_right")
+            object:move(1, 0, "e")
 --            object:getSprite():setAnimation("walking_right")
 
         elseif love.keyboard.isDown("w") then
 
-            object:move(0, -1, "walking_up")
+            object:move(0, -1, "n")
 --            object:getSprite():setAnimation("walking_up")
 
         end
@@ -88,7 +91,7 @@ function love.draw()
     abra:draw()
 
     -- Control FPS
-    game:wait()
+    xpGame:wait()
 end
 
 function love.mousepressed(x, y, button)
@@ -102,22 +105,22 @@ end
 function love.keypressed(key, unicode)
     if key == "escape" then
         love.event.quit()
-    elseif key == "w" then
-        abra:setAnimation("n")
-    elseif key == "s" then
-        abra:setAnimation("s")
-    elseif key == "a" then
-        abra:setAnimation("w")
-    elseif key == "d" then
-        abra:setAnimation("e")
-    elseif key == "z" then
-        abra:setAnimation("sw")
-    elseif key == "x" then
-        abra:setAnimation("se")
-    elseif key == "q" then
-        abra:setAnimation("nw")
-    elseif key == "e" then
-        abra:setAnimation("ne")
+--    elseif key == "w" then
+--        abra:setAnimation("n")
+--    elseif key == "s" then
+--        abra:setAnimation("s")
+--    elseif key == "a" then
+--        abra:setAnimation("w")
+--    elseif key == "d" then
+--        abra:setAnimation("e")
+--    elseif key == "z" then
+--        abra:setAnimation("sw")
+--    elseif key == "x" then
+--        abra:setAnimation("se")
+--    elseif key == "q" then
+--        abra:setAnimation("nw")
+--    elseif key == "e" then
+--        abra:setAnimation("ne")
     end
 end
 

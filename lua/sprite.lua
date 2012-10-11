@@ -1,3 +1,23 @@
+--[[
+   sprite.lua
+   This file is part of PokémonXP
+  
+   Copyright (C) 2012 - Filipe Neto
+  
+   PokémonXP is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+  
+   PokémonXP is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+  
+   You should have received a copy of the GNU General Public License
+   along with PokémonXP. If not, see <http://www.gnu.org/licenses/>.
+]]
+
 require("lua/game")
 require("lua/animation")
 require("math")
@@ -7,12 +27,12 @@ Sprite = {}
 setmetatable(Sprite, {
     __call = function(table, filename, imageFilename)
         print("creating: sprite: " .. filename)
-        local chunk = love.filesystem.load(game:getSpritePath() .. filename)
+        local chunk = love.filesystem.load(xpGame:getSpritePath() .. filename)
         local spriteData = chunk()
 
         spriteData.imageFilename = imageFilename or spriteData.imageFilename
 
-        if imageBank[spriteData.imageFilename] == nil then
+        if xpImageBank[spriteData.imageFilename] == nil then
             print("imageBank: "..spriteData.imageFilename.." missing")
             print("image: "..spriteData.imageFilename.." opened")
         else
@@ -20,10 +40,11 @@ setmetatable(Sprite, {
             print("image: "..spriteData.imageFilename.." loaded")
         end
 
-        local image = imageBank[spriteData.imageFilename] or
-            love.graphics.newImage(game:getImagePath() .. spriteData.imageFilename)
+        local image = xpImageBank[spriteData.imageFilename] or
+                        love.graphics.newImage(xpGame:getImagePath() ..
+                                               spriteData.imageFilename)
 
-        imageBank[spriteData.imageFilename] = image
+        xpImageBank[spriteData.imageFilename] = image
 
 
         local obj = {
