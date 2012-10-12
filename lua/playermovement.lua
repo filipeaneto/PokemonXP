@@ -21,9 +21,15 @@
 PlayerMovement = {}
 
 setmetatable(PlayerMovement, {
-    __call = function(table, objects)
+    __call = function(table, object)
         obj = {
-            objects = objects
+            object          = object,	
+            lastKey         = nil,
+            actualKey       = nil,
+            nextKey         = nil,
+            movement        = {}, -- vetores de movimento
+            mAnimation      = {}, -- animação movendo
+            iAnimation      = {}  -- animação parado
         }
         
         setmetatable(obj, { __index = PlayerMovement })
@@ -31,23 +37,63 @@ setmetatable(PlayerMovement, {
     end
 })
 
-function PlayerMovement:setMovement(key, dv, animation)
-    self.key = { dv = dv, animation = animation }
+function PlayerMovement:setMovement(key, dv, mAnimation, iAnimation)
+    self.movement[key] = dv:clone()
+    self.mAnimation[key] = mAnimation
+    self.iAnimation[key] = iAnimation
+
+    return true
 end
 
-function PlayerMovement:dropMovement(key)
-    self.key = nil
+function PlayerMovement:unsetMovement(key)
+    if self.movement[key] == nil then return false end
+
+    self.movement[key] = nil
+    self.mAnimation[key] = nil
+    self.iAnimation[key] = nil
+    
+    return true
 end
 
 function PlayerMovement:keyPressed(key)
+    if self.movement[key] == nil then return false end
 
+    self.lastKey = key
+    if self.actualKey == nil then
+        self.actualKey = key
+    else
+        self.nextKey = key
+    end
+    
+    return true
 end
 
 function PlayerMovement:keyReleased(key)
-
+    if self.movement[key] == nil then return false end
+    
+    if self.actualKey == key then
+        self.actualKey, self.nextKey = self.nextKey, nil
+    elseif self.nextKey == key then
+        self.nextKey = nil
+    end
 end
 
 function PlayerMovement:update(dt)
-
+    local actual = self.actualKey
+    local object = self.object
+        
+    if actual then
+        if not object.isMoving then
+            local dv = self.movement[actual]
+            local animation = self.mAnimation[actual]
+        
+            object:move(dv, animation)
+        end
+    elseif self.lastKey then
+        object:move(Vec2(), self.iAnimation[self.lastKey])
+        self.lastKey = nil
+    end
+    
+    object:update(dt)
 end
 

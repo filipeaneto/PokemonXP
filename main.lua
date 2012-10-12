@@ -18,6 +18,7 @@
    along with PokémonXP. If not, see <http://www.gnu.org/licenses/>.
 ]]
 
+require("lua/playermovement")
 require("lua/naivebayes")
 require("lua/imagebank")
 require("lua/sprite")
@@ -28,7 +29,7 @@ function love.load()
     xpGame = Game()
     xpImageBank= ImageBank(50)
 
-    xpGame:setFPS(24)
+    xpGame:setFPS(20)
 
     xpGame:start()
 
@@ -37,7 +38,12 @@ function love.load()
     abra = Sprite("default32_movement5.spr", "pokemon/063_movement.png")
     abra:setPosition(64, 64)
 
-    object = Object(abra, 40, 4)
+    object = Object(abra, 96, 8)
+    player = PlayerMovement(object)
+    player:setMovement("s", Vec2(0, 1), "s", nil)
+    player:setMovement("w", Vec2(0,-1), "n", nil)
+    player:setMovement("a", Vec2(-1,0), "w", nil)
+    player:setMovement("d", Vec2(1, 0), "e", nil)
 
     hero = Sprite("hero.spr")
 
@@ -45,7 +51,7 @@ function love.load()
     
     
     -- testando NaiveBayesClassifier
-    classifier = NaiveBayesClassifier(4)
+    classifier = NaiveBayesClassifier(3, {2, 2, 2})
     classifier:insertClass("yes")
     classifier:insertClass("no")
     
@@ -60,41 +66,64 @@ function love.load()
     classifier:insertData({"no",  "red", "SUV",    "imported"}) -- 9
     classifier:insertData({"yes", "red", "sports", "imported"})
     
-    result = classifier:classify({"red", "SUV", "domestic"})
+    result = classifier:classify({"red", "sports", "domestic"}, 0)
+    
+    -- treinando um pokemon
+    classifier = NaiveBayesClassifier(2, {17, 18})
+    
+    classifier:insertClass("Thunder Shock")
+    classifier:insertClass("Tackle")
+    
+    classifier:insertData({"Thunder Shock", "Normal", "None"})
+    classifier:insertData({"Thunder Shock", "Water", "None"})
+    classifier:insertData({"Thunder Shock", "Water", "Plant"})
+    classifier:insertData({"Thunder Shock", "Fire", "None"})
+    classifier:insertData({"Thunder Shock", "Flying", "None"})
+    classifier:insertData({"Thunder Shock", "Flying", "Water"})
+    
+    classifier:insertData({"Tackle", "Rock", "None"})
+    classifier:insertData({"Tackle", "Ground", "None"})
+    classifier:insertData({"Tackle", "Plant", "None"})
+    classifier:insertData({"Tackle", "Fire", "None"})
+    
+    result = classifier:classify({"Water", "None"})
 end
 
 function love.update(dt)
     xpGame:update(dt)
 
-    limitKey = limitKey + dt
+--    limitKey = limitKey + dt
 
-    if limitKey > 0.8 then
-        if love.keyboard.isDown("a") then
+--    if limitKey > 0.8 then
+--        if love.keyboard.isDown("a") then
 
-            object:move(-1, 0, "w")
---            object:getSprite():setAnimation("walking_left")
+--            object:move(-1, 0, "w")
+----            object:getSprite():setAnimation("walking_left")
 
-        elseif love.keyboard.isDown("s") then
+--        elseif love.keyboard.isDown("s") then
 
-            object:move(0, 1, "s")
---            object:getSprite():setAnimation("walking_down")
+--            object:move(0, 1, "s")
+----            object:getSprite():setAnimation("walking_down")
 
-        elseif love.keyboard.isDown("d") then
+--        elseif love.keyboard.isDown("d") then
 
-            object:move(1, 0, "e")
---            object:getSprite():setAnimation("walking_right")
+--            object:move(1, 0, "e")
+----            object:getSprite():setAnimation("walking_right")
 
-        elseif love.keyboard.isDown("w") then
+--        elseif love.keyboard.isDown("w") then
 
-            object:move(0, -1, "n")
---            object:getSprite():setAnimation("walking_up")
+--            object:move(0, -1, "n")
+----            object:getSprite():setAnimation("walking_up")
 
-        end
-        limitKey = limitKey - 0.8
-    end
+--        end
+--        limitKey = limitKey - 0.8
+--    end
+    
+    
 
-    object:update(dt)
-    abra:update(dt)
+
+    --object:update(dt)
+    player:update(dt)
 end
 
 function love.draw()
@@ -109,7 +138,6 @@ function love.draw()
 
     love.graphics.print("Hello World: "..(result or "cagou"), 400, 300)
     object:draw()
-    abra:draw()
 
     -- Control FPS
     xpGame:wait()
@@ -145,10 +173,12 @@ function love.keypressed(key, unicode)
 --    elseif key == "e" then
 --        abra:setAnimation("ne")
     end
+    
+    player:keyPressed(key)
 end
 
 function love.keyreleased(key, unicode)
-
+    player:keyReleased(key)
 end
 
 function love.focus(focus)

@@ -28,12 +28,13 @@ Object = {}
 setmetatable(Object, {
     __call = function(table, sprite, speed, deltaStep)
         obj = {
-            sprite      = sprite,
-            dPosition   = Vec2(sprite:getPosition().x, sprite:getPosition().y),
-            speed       = speed or 32,
-            movements   = List(),
-            isMoving    = false,
-            deltaStep   = deltaStep or 2
+            sprite          = sprite,
+            dPosition       = Vec2(sprite:getPosition().x, sprite:getPosition().y),
+            speed           = speed or 32,
+            movements       = List(),
+            isMoving        = false,
+            deltaStep       = deltaStep or 2,
+            lastAnimation   = nil 
         }
         
         setmetatable(obj, { __index = Object })
@@ -50,7 +51,7 @@ function Object:update(dt)
         local position = self.sprite:getPosition()
         local dp = (position - self.dPosition)
         local norm = dp:norm()
-        
+ 
         dp = dt * self.speed * (dp:normalized()) 
         
         if norm < self.deltaStep then
@@ -62,7 +63,10 @@ function Object:update(dt)
         local mov = self.movements:popLeft()
         local dv, animation = mov.vector, mov.animation
         
-        if animation ~= nil then self.sprite:setAnimation(animation) end
+        if animation ~= nil and self.lastAnimation ~= animation then
+            self.lastAnimation = animation
+            self.sprite:setAnimation(animation) 
+        end
     
         dv.x, dv.y = math.floor(dv.x), math.floor(dv.y)
 
@@ -75,11 +79,8 @@ function Object:update(dt)
     self.sprite:update(dt)
 end
 
-function Object:move(dx, dy, animation)
-    local dv = {}
-    if dy == nil then dv = Vec2(dx) else dv = Vec2(dx, dy) end
-
-    self.movements:pushRight({ vector = dv, animation = animation})
+function Object:move(dv, animation)
+    self.movements:pushRight({ vector = dv:clone(), animation = animation})
 end
 
 

@@ -22,22 +22,26 @@
     Implementa uma inteligência artificial baseada em Naive Bayes para os
     pokémon do jogador, ou seja, as ações involuntárias são escolhidas baseadas
     nas ações voluntárias previamente executadas.
+    
+    Atributos analisados para a decisão:
+    {"LVL: >|<|=", "P.HP: R|Y|G", "E.HP: R|Y|G", "E. Best status", "P.Status: Non volatile All?", 
+    "E.Status: All", "E.Type1: All", "E.Type2: All", "Last Movement", "Weather", "Day/Night" }
+     
+    { 3, 3, 3, 7, 5, 5, 17, 18, 4, 7, 2}
 ]]
-
--- TODO melhorar o algoritmo
 
 require("table")
 
 NaiveBayesClassifier = {}
 
 setmetatable(NaiveBayesClassifier, {
-    __call = function(table, inputSize, maxTSsize)
+    __call = function(table, inputSize, nAtts, maxTSsize)
         obj = {
             trainingSet = {},
-            inputSize   = inputSize,
-            maxTSsize   = maxTSsize or 100,
+            inputSize   = inputSize + 1,
+            maxTSsize   = maxTSsize or 200,
             classes     = {},
-            natts       = {}
+            nAtts       = nAtts or {} -- numero de opcoes para determinado atributo
         }
 
         setmetatable(obj, { __index = NaiveBayesClassifier })
@@ -90,7 +94,9 @@ function NaiveBayesClassifier:clearTrainingSet()
     self.trainingSet = {}
 end
 
-function NaiveBayesClassifier:classify(data)
+function NaiveBayesClassifier:classify(data, m)
+    m = m or 1
+
     print("\n*******\nComeçou a classificação!\n")
 
     if #data ~= self.inputSize - 1 or #self.trainingSet == 0 then
@@ -131,9 +137,8 @@ function NaiveBayesClassifier:classify(data)
             end
             
             local nc = self.classes[class]          -- elementos da classe
-            local pp = 1 / (self.natts[i] or 2)     -- probilidade a priori
+            local pp = 1 / (self.nAtts[i] or 2)     -- probilidade a priori
             local na = count                        -- destes quantos sao att
-            local m = 3
             
             print("P("..att.."|"..class..") = "..((na + m*pp)/(nc + m)))
 
