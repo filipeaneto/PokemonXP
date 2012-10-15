@@ -27,7 +27,7 @@ setmetatable(Game, {
             spritePath  = "data/sprite/",
             imagePath   = "data/image/",
             
-            grid        = Vec2(32, 32),
+            grid        = Vec2(16, 16),
             
             timerMinDt  = 1/30,
             timerNext   = nil,

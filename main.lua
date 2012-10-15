@@ -29,115 +29,55 @@ function love.load()
     xpGame = Game()
     xpImageBank= ImageBank(50)
 
-    xpGame:setFPS(20)
+    xpGame:setFPS(24)
 
     xpGame:start()
 
     collectgarbage("stop")
+    
+    local chunk = love.filesystem.load("data/map/kanto_001.map")
+    local map = chunk()
 
     abra = Sprite("default32_movement5.spr", "pokemon/063_movement.png")
-    abra:setPosition(64, 64)
+    abra:setPosition(224, 288)
 
-    object = Object(abra, 96, 8)
+    object = Object(abra, map, 48, 4)
     player = PlayerMovement(object)
+    
     player:setMovement("s", Vec2(0, 1), "s", nil)
     player:setMovement("w", Vec2(0,-1), "n", nil)
     player:setMovement("a", Vec2(-1,0), "w", nil)
     player:setMovement("d", Vec2(1, 0), "e", nil)
-
-    hero = Sprite("hero.spr")
-
-    limitKey = 0
     
-    
-    -- testando NaiveBayesClassifier
-    classifier = NaiveBayesClassifier(3, {2, 2, 2})
-    classifier:insertClass("yes")
-    classifier:insertClass("no")
-    
-    classifier:insertData({"yes", "red", "sports", "domestic"}) -- 1
-    classifier:insertData({"no",  "red", "sports", "domestic"})
-    classifier:insertData({"yes", "red", "sports", "domestic"}) -- 3
-    classifier:insertData({"no",  "yel", "sports", "domestic"})
-    classifier:insertData({"yes", "yel", "sports", "imported"}) -- 5
-    classifier:insertData({"no",  "yel", "SUV",    "imported"}) 
-    classifier:insertData({"yes", "yel", "SUV",    "imported"}) -- 7
-    classifier:insertData({"no",  "yel", "SUV",    "domestic"})
-    classifier:insertData({"no",  "red", "SUV",    "imported"}) -- 9
-    classifier:insertData({"yes", "red", "sports", "imported"})
-    
-    result = classifier:classify({"red", "sports", "domestic"}, 0)
-    
-    -- treinando um pokemon
-    classifier = NaiveBayesClassifier(2, {17, 18})
-    
-    classifier:insertClass("Thunder Shock")
-    classifier:insertClass("Tackle")
-    
-    classifier:insertData({"Thunder Shock", "Normal", "None"})
-    classifier:insertData({"Thunder Shock", "Water", "None"})
-    classifier:insertData({"Thunder Shock", "Water", "Plant"})
-    classifier:insertData({"Thunder Shock", "Fire", "None"})
-    classifier:insertData({"Thunder Shock", "Flying", "None"})
-    classifier:insertData({"Thunder Shock", "Flying", "Water"})
-    
-    classifier:insertData({"Tackle", "Rock", "None"})
-    classifier:insertData({"Tackle", "Ground", "None"})
-    classifier:insertData({"Tackle", "Plant", "None"})
-    classifier:insertData({"Tackle", "Fire", "None"})
-    
-    result = classifier:classify({"Water", "None"})
+    pallet = love.graphics.newImage("data/image/kanto_001.png")
+    pallet2 = love.graphics.newImage("data/image/kanto_001f.png")
 end
 
 function love.update(dt)
     xpGame:update(dt)
-
---    limitKey = limitKey + dt
-
---    if limitKey > 0.8 then
---        if love.keyboard.isDown("a") then
-
---            object:move(-1, 0, "w")
-----            object:getSprite():setAnimation("walking_left")
-
---        elseif love.keyboard.isDown("s") then
-
---            object:move(0, 1, "s")
-----            object:getSprite():setAnimation("walking_down")
-
---        elseif love.keyboard.isDown("d") then
-
---            object:move(1, 0, "e")
-----            object:getSprite():setAnimation("walking_right")
-
---        elseif love.keyboard.isDown("w") then
-
---            object:move(0, -1, "n")
-----            object:getSprite():setAnimation("walking_up")
-
---        end
---        limitKey = limitKey - 0.8
---    end
-    
-    
-
-
+    player:update(dt) -- tá muito lento
     --object:update(dt)
-    player:update(dt)
 end
 
 function love.draw()
     love.graphics.print("FPS: "..tostring(love.timer.getFPS( )), 10, 10)
     local mem = collectgarbage ("count")
     
-    if mem > 2048 then
+    if mem > 1000 then
         love.graphics.print("Memory: "..math.floor(mem/1024).." MB", 10, 20)
     else
         love.graphics.print("Memory: "..math.floor(mem).." KB", 10, 20)
     end
-
-    love.graphics.print("Hello World: "..(result or "cagou"), 400, 300)
+    
+    love.graphics.draw(pallet, 0, 0)
+    -- absurdamente lento :(
+--    for i = 0, 20 do
+--        for j = 0, 15 do
+--            love.graphics.rectangle("line", i*32 - 16, j*32 - 16, 32, 32)
+--        end
+--    end
     object:draw()
+    love.graphics.draw(pallet2, 0, 0)
 
     -- Control FPS
     xpGame:wait()
@@ -156,25 +96,9 @@ function love.keypressed(key, unicode)
         love.event.quit()
     elseif key == "g" then
         collectgarbage()
---    elseif key == "w" then
---        abra:setAnimation("n")
---    elseif key == "s" then
---        abra:setAnimation("s")
---    elseif key == "a" then
---        abra:setAnimation("w")
---    elseif key == "d" then
---        abra:setAnimation("e")
---    elseif key == "z" then
---        abra:setAnimation("sw")
---    elseif key == "x" then
---        abra:setAnimation("se")
---    elseif key == "q" then
---        abra:setAnimation("nw")
---    elseif key == "e" then
---        abra:setAnimation("ne")
+    else
+        player:keyPressed(key)
     end
-    
-    player:keyPressed(key)
 end
 
 function love.keyreleased(key, unicode)
