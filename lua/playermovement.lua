@@ -90,7 +90,7 @@ function PlayerMovement:update(dt)
             object:move(dv, animation)
         end
     elseif self.lastKey then
-        object:move(Vec2(), self.iAnimation[self.lastKey])
+        object:move(nil, self.iAnimation[self.lastKey])
         self.lastKey = nil
     end
     

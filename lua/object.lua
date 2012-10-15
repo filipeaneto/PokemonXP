@@ -78,22 +78,24 @@ function Object:update(dt)
             self.sprite:setAnimation(animation) 
         end
         
-        local x, y = self.posX, self.posY
-        dv.x, dv.y = math.floor(dv.x), math.floor(dv.y)
-        
---        print("x: "..x.." y: "..y)
---        print("direção: "..(2.5 - 1.5*dv.x - 0.5*dv.y))
---        print(self.map.collisionMask[x][y][2.5 - 1.5*dv.x - 0.5*dv.y])
---        print("**********")
---        
---        if self.map.collisionMask[y][x][2.5 - 1.5*dv.x - 0.5*dv.y] then
-            self.posX, self.posY = self.posX + dv.x, self.posY + dv.y
-        
-            self.dPosition.x = self.dPosition.x + dv.x * xpGame:getGrid().x
-            self.dPosition.y = self.dPosition.y + dv.y * xpGame:getGrid().y
+        if dv then
+            dv.x, dv.y = math.floor(dv.x), math.floor(dv.y)
+            local x, y = self.posX + dv.x, self.posY + dv.y
             
-            self.isMoving = true               
---        end
+            print("x: "..x.." y: "..y)
+    --        print("direção: "..(2.5 - 1.5*dv.x - 0.5*dv.y))
+            print(self.map.collisionMask[x][y])
+            print("**********")
+    --        
+            if not self.map or self.map.collisionMask[y][x] then
+                self.posX, self.posY = self.posX + dv.x, self.posY + dv.y
+            
+                self.dPosition.x = self.dPosition.x + dv.x * xpGame:getGrid().x
+                self.dPosition.y = self.dPosition.y + dv.y * xpGame:getGrid().y
+                
+                self.isMoving = true               
+            end
+        end
 
     end
     
@@ -101,7 +103,8 @@ function Object:update(dt)
 end
 
 function Object:move(dv, animation)
-    self.movements:pushRight({ vector = dv:clone(), animation = animation})
+    if dv then dv = dv:clone() end
+    self.movements:pushRight({ vector = dv, animation = animation})
 end
 
 
