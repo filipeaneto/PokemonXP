@@ -26,58 +26,60 @@ require("lua/object")
 require("lua/game")
 
 function love.load()
+    -- Variaveis globais importantes
     xpGame = Game()
-    xpImageBank= ImageBank(50)
-
+    xpImageBank = ImageBank(50)
+    xpPlayer = {}
+    xpMap = {}
+    
+    -- inicia o jogo
     xpGame:setFPS(24)
-
     xpGame:start()
 
-    collectgarbage("stop")
+    -- se necessário, desligue o Garbage Collector
+    -- collectgarbage("stop")
     
+    -- inicializa o mapa
     local chunk = love.filesystem.load("data/map/kanto_001.map")
-    local map = chunk()
+    chunk() -- mudar para .events
 
-    abra = Sprite("default32_movement5.spr", "pokemon/063_movement.png")
-    abra:setPosition(224, 288)
-
-    object = Object(abra, map, 48, 4)
-    player = PlayerMovement(object)
+    local abra = Sprite("default32_movement5.spr", "pokemon/063_movement.png")
+    object = Object(abra, xpMap, 48, 4)
+    local player = PlayerMovement(object)
     
     player:setMovement("s", Vec2(0, 1), "s", nil)
     player:setMovement("w", Vec2(0,-1), "n", nil)
     player:setMovement("a", Vec2(-1,0), "w", nil)
     player:setMovement("d", Vec2(1, 0), "e", nil)
     
-    pallet = love.graphics.newImage("data/image/kanto_001.png")
-    pallet2 = love.graphics.newImage("data/image/kanto_001f.png")
+    xpPlayer = player
+    
+    xpMap.back  = love.graphics.newImage("data/image/kanto_001.png")
+    xpMap.front = love.graphics.newImage("data/image/kanto_001f.png")
+    
+    debugDt = 0
 end
 
 function love.update(dt)
+    debugDt = debugDt + dt
+    if debugDt > 1 then
+        xpGame:updateDebug(dt)
+        debugDt = 0
+    end
+
     xpGame:update(dt)
-    player:update(dt) -- tá muito lento
-    --object:update(dt)
+    xpPlayer:update(dt) -- tá muito lento (?)
 end
 
 function love.draw()
-    love.graphics.print("FPS: "..tostring(love.timer.getFPS( )), 10, 10)
-    local mem = collectgarbage ("count")
+    xpGame:drawDebug()
     
-    if mem > 1000 then
-        love.graphics.print("Memory: "..math.floor(mem/1024).." MB", 10, 20)
-    else
-        love.graphics.print("Memory: "..math.floor(mem).." KB", 10, 20)
-    end
+    love.graphics.draw(xpMap.back, 0, 0)
     
-    love.graphics.draw(pallet, 0, 0)
-    -- absurdamente lento :(
---    for i = 0, 20 do
---        for j = 0, 15 do
---            love.graphics.rectangle("line", i*32 - 16, j*32 - 16, 32, 32)
---        end
---    end
+    -- precisa ser mudado
     object:draw()
-    love.graphics.draw(pallet2, 0, 0)
+    
+    -- love.graphics.draw(xpMap.front, 0, 0)
 
     -- Control FPS
     xpGame:wait()
@@ -94,15 +96,15 @@ end
 function love.keypressed(key, unicode)
     if key == "escape" then
         love.event.quit()
-    elseif key == "g" then
-        collectgarbage()
+--    elseif key == "g" then
+--        collectgarbage()
     else
-        player:keyPressed(key)
+        xpPlayer:keyPressed(key)
     end
 end
 
 function love.keyreleased(key, unicode)
-    player:keyReleased(key)
+    xpPlayer:keyReleased(key)
 end
 
 function love.focus(focus)

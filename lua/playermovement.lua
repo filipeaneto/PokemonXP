@@ -82,6 +82,8 @@ function PlayerMovement:update(dt)
     local actual = self.actualKey
     local object = self.object
         
+    object:update(dt)
+
     if actual then
         if not object.isMoving then
             local dv = self.movement[actual]
@@ -92,8 +94,6 @@ function PlayerMovement:update(dt)
     elseif self.lastKey then
         object:move(nil, self.iAnimation[self.lastKey])
         self.lastKey = nil
-    end
-    
-    object:update(dt)
+    end    
 end
 

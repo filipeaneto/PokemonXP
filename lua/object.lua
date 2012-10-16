@@ -82,19 +82,19 @@ function Object:update(dt)
             dv.x, dv.y = math.floor(dv.x), math.floor(dv.y)
             local x, y = self.posX + dv.x, self.posY + dv.y
             
-            print("x: "..x.." y: "..y)
-    --        print("direção: "..(2.5 - 1.5*dv.x - 0.5*dv.y))
-            print(self.map.collisionMask[x][y])
-            print("**********")
-    --        
-            if not self.map or self.map.collisionMask[y][x] then
+--            print("x: "..x.." y: "..y)
+--    --        print("direção: "..(2.5 - 1.5*dv.x - 0.5*dv.y))
+--            print(self.map.collisionMask[x][y])
+--            print("**********")
+--    --        
+--            if not self.map or self.map.collisionMask[y][x] then
                 self.posX, self.posY = self.posX + dv.x, self.posY + dv.y
             
                 self.dPosition.x = self.dPosition.x + dv.x * xpGame:getGrid().x
                 self.dPosition.y = self.dPosition.y + dv.y * xpGame:getGrid().y
                 
                 self.isMoving = true               
-            end
+--            end
         end
 
     end

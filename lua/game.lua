@@ -31,6 +31,11 @@ setmetatable(Game, {
             
             timerMinDt  = 1/30,
             timerNext   = nil,
+            timerSleep  = 0,
+            
+            debugCPU    = 0,
+            debugMem    = 0,
+            debugFPS    = 0,
         }
         
         setmetatable(obj, { __index = Game } )
@@ -52,7 +57,8 @@ function Game:wait()
         self.timerNext = curTime
         return
     end
-    love.timer.sleep(self.timerNext - curTime) 
+    self.timerSleep = self.timerNext - curTime
+    love.timer.sleep(self.timerSleep) 
 end
 
 function Game:getSpritePath() return self.spritePath end
@@ -61,3 +67,22 @@ function Game:getImagePath() return self.imagePath end
 function Game:getGrid() return self.grid end
 
 function Game:setFPS(fps) self.timerMinDt = 1/fps end
+
+function Game:updateDebug(dt)
+    self.debugFPS = love.timer.getFPS()
+    self.debugMem = collectgarbage("count")
+    self.debugCPU = (self.timerMinDt - self.timerSleep) / (self.timerMinDt)
+end
+
+function Game:drawDebug()
+    love.graphics.print("FPS: "..self.debugFPS, 10, 10)
+    
+    mem = self.debugMem
+    if mem > 2048 then
+        love.graphics.print("Memory: "..math.floor(mem/1024).." MB", 10, 25)
+    else
+        love.graphics.print("Memory: "..math.floor(mem).." KB", 10, 25)
+    end
+    
+    love.graphics.print("CPU: "..math.floor(self.debugCPU * 100).."%", 10, 40)
+end
