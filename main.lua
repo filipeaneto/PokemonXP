@@ -56,7 +56,7 @@ function love.load()
     xpPlayer = player
     
     xpMap.back  = love.graphics.newImage("data/image/pallet.png")
-    xpMap.front = love.graphics.newImage("data/image/kanto_001f.png")
+    xpMap.front1 = love.graphics.newImage("data/image/palletf1.png")
     
     debugDt = 0
 end

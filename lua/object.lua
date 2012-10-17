@@ -54,6 +54,14 @@ setmetatable(Object, {
 
 function Object:draw()
     self.sprite:draw()
+    if self.map then
+        local event = self.map.event[self.posY][self.posX]
+     
+        if type(event) == "number" and event >= 1 then
+            local img = self.map["front"..(self.map.event[self.posY][self.posX])]
+            love.graphics.draw(img, 0, 0)
+        end
+    end
 end
 
 function Object:update(dt)
