@@ -87,14 +87,22 @@ function Object:update(dt)
 --            print(self.map.collisionMask[x][y])
 --            print("**********")
 --    --        
---            if not self.map or self.map.collisionMask[y][x] then
-                self.posX, self.posY = self.posX + dv.x, self.posY + dv.y
+            local event = nil
+            if self.map then
+                event = self.map.event[y][x]
+            end
+            
+            if event == nil or (type(event) == "number" and event ~= 0) or 
+               (type(event) == "string" and self.map.callback[event] and
+                self.map.callback[event](self, x, y))
+            then
+                self.posX, self.posY = x, y
             
                 self.dPosition.x = self.dPosition.x + dv.x * xpGame:getGrid().x
                 self.dPosition.y = self.dPosition.y + dv.y * xpGame:getGrid().y
                 
-                self.isMoving = true               
---            end
+                self.isMoving = true
+            end
         end
 
     end
@@ -107,6 +115,14 @@ function Object:move(dv, animation)
     self.movements:pushRight({ vector = dv, animation = animation})
 end
 
+function Object:setPosition(dv)
+    self.posX, self.posY = math.floor(dv.x), math.floor(dv.y)
+    local x = 8 + xpGame:getGrid().x * (self.posX - 1)
+    local y = 8 + xpGame:getGrid().y * (self.posY - 1)
+    
+    self.sprite:setPosition(x, y, true)
+    self.dPosition = Vec2(x, y)
+end
 
 function Object:getSprite()
     return self.sprite

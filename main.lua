@@ -40,11 +40,12 @@ function love.load()
     -- collectgarbage("stop")
     
     -- inicializa o mapa
-    local chunk = love.filesystem.load("data/map/kanto_001.map")
+    local chunk = love.filesystem.load("data/map/pallet.map")
     chunk() -- mudar para .events
 
     local abra = Sprite("default32_movement5.spr", "pokemon/063_movement.png")
     object = Object(abra, xpMap, 48, 4)
+    object:setPosition(Vec2(20, 20))
     local player = PlayerMovement(object)
     
     player:setMovement("s", Vec2(0, 1), "s", nil)
@@ -54,7 +55,7 @@ function love.load()
     
     xpPlayer = player
     
-    xpMap.back  = love.graphics.newImage("data/image/kanto_001.png")
+    xpMap.back  = love.graphics.newImage("data/image/pallet.png")
     xpMap.front = love.graphics.newImage("data/image/kanto_001f.png")
     
     debugDt = 0
