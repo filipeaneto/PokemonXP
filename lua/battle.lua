@@ -21,7 +21,8 @@
 battle = {}
 
 function battle.load()
-
+    xpAlly  = { [1] = nil, [2] = nil, [3] = nil}
+    xpEnemy = { [1] = nil, [2] = nil, [3] = nil}
 end
 
 function battle.update(dt)
