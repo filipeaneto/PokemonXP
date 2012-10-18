@@ -1,0 +1,19 @@
+return {
+    dexNumber   = 001,
+    species     = "bulbasaur",
+    types       = {"grass", "poison"},
+    height      = 0.71,
+    weight      = 6.9,
+    stats       = {
+        hp      = 45,
+        attack  = 49,
+        defense = 49,
+        spAtk   = 65,
+        spDef   = 65,
+        speed   = 45,       
+    },
+    
+    evLevel     = 16,
+    evFile      = "data/pokemon/ivysaur.pkmn"    
+}
+
