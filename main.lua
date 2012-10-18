@@ -73,9 +73,9 @@ function love.update(dt)
 end
 
 function love.draw()
-    xpGame:drawDebug()
-    
     love.graphics.draw(xpMap.back, 0, 0)
+
+    xpGame:drawDebug()    
     
     -- precisa ser mudado
     object:draw()

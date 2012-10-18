@@ -18,6 +18,7 @@
    along with PokémonXP. If not, see <http://www.gnu.org/licenses/>.
 ]]
 
+require("lua/utils")
 require("lua/vec2")
 
 Game = {}
@@ -78,8 +79,8 @@ function Game:drawDebug()
     love.graphics.print("FPS: "..self.debugFPS, 10, 10)
     
     mem = self.debugMem
-    if mem > 2048 then
-        love.graphics.print("Memory: "..math.floor(mem/1024).." MB", 10, 25)
+    if mem > 1024 then
+        love.graphics.print("Memory: "..math.round(mem/1024, 1).." MB", 10, 25)
     else
         love.graphics.print("Memory: "..math.floor(mem).." KB", 10, 25)
     end

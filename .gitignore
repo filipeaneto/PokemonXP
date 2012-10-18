@@ -1,4 +1,5 @@
 ## generic files to ignore
 *~
 *.png
-
+release/
+wiki/
