@@ -76,13 +76,13 @@ end
 function love.draw()
     love.graphics.draw(xpMap.back, 0, 0)
 
-    xpGame:drawDebug()    
-    
     -- precisa ser mudado
     object:draw()
     
     -- love.graphics.draw(xpMap.front, 0, 0)
 
+    xpGame:drawDebug()    
+    
     -- Control FPS
     xpGame:wait()
 end
