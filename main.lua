@@ -43,15 +43,16 @@ function love.load()
     local chunk = love.filesystem.load("data/map/pallet.map")
     chunk() -- mudar para .events
 
-    local abra = Sprite("default32_movement5.spr", "pokemon/063_movement.png")
-    object = Object(abra, xpMap, 48, 4)
+    --local abra = Sprite("default32_movement5.spr", "pokemon/063_movement.png")
+    local hero = Sprite("hero.spr")
+    object = Object(hero, xpMap, 48, 4)
     object:setPosition(Vec2(20, 20))
     local player = PlayerMovement(object)
     
-    player:setMovement("s", Vec2(0, 1), "s", nil)
-    player:setMovement("w", Vec2(0,-1), "n", nil)
-    player:setMovement("a", Vec2(-1,0), "w", nil)
-    player:setMovement("d", Vec2(1, 0), "e", nil)
+    player:setMovement("s", Vec2(0, 1), "m-s", "i-s")
+    player:setMovement("w", Vec2(0,-1), "m-n", "i-n")
+    player:setMovement("a", Vec2(-1,0), "m-w", "i-w")
+    player:setMovement("d", Vec2(1, 0), "m-e", "i-e")
     
     xpPlayer = player
     

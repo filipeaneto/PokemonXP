@@ -1,63 +1,37 @@
 return {
     imageFilename   = "hero.png",
 
-    animating       = true,
     rotating        = false,
+    animating       = true,
 
-    width           = 64,
-    height          = 64,
-    
+    width           = 32,
+    height          = 32,
+
     animations      = {
-        {
-            name = "idle_down", 
-            x = 0, y = 0, 
-            frameCount = 1
-        },
-        
-        {
-            name = "walking_down", 
-            x = 0, y = 0, 
-            frameCount = 4, frameLength = 0.2, 
-            nextAnimation = "walking_down"
-        },
-        
-        {
-            name = "idle_left", 
-            x = 0, y = 64, 
-            frameCount = 1
-        },
-        
-        {
-            name = "walking_left", 
-            x = 0, y = 64, 
-            frameCount = 4, frameLength = 0.2, 
-            nextAnimation = "walking_left"
-        },
-        
-        {
-            name = "idle_right", 
-            x = 0, y = 128, 
-            frameCount = 1
-        },
-        
-        {
-            name = "walking_right", 
-            x = 0, y = 128, 
-            frameCount = 4, frameLength = 0.2, 
-            nextAnimation = "walking_right"
-        },
-        
-        {
-            name = "idle_up", 
-            x = 0, y = 192, 
-            frameCount = 1
-        },
-        
-        {
-            name = "walking_up", 
-            x = 0, y = 192, 
-            frameCount = 4, frameLength = 0.2, 
-            nextAnimation = "walking_up"
-        },
+        { name = "i-s", x = 32, y = 0, frameCount = 1 },
+        { name = "i-w", x = 128, y = 0, frameCount = 1 },
+        { name = "i-n", x = 224, y = 0, frameCount = 1 },
+        { name = "i-e", x = 128, y = 0, mirrorX = true, frameCount = 1 },
+          
+        { name = "m-s", x = 32, y = 0, frameCount = 1,
+          frameLength = 0.2, nextAnimation = "m-s2" },
+        { name = "m-s2", x = 0, y = 0, frameCount = 3,
+          frameLength = 0.2, nextAnimation = "m-s" },
+
+        { name = "m-w", x = 128, y = 0, frameCount = 1,
+          frameLength = 0.2, nextAnimation = "m-w2" },
+        { name = "m-w2", x = 96, y = 0, frameCount = 3,
+          frameLength = 0.2, nextAnimation = "m-w" },
+
+        { name = "m-n", x = 224, y = 0, frameCount = 1,
+          frameLength = 0.2, nextAnimation = "m-n2" },
+        { name = "m-n2", x = 192, y = 0, frameCount = 3,
+          frameLength = 0.2, nextAnimation = "m-n" },
+
+        { name = "m-e", x = 128, y = 0, mirrorX = true,
+          frameCount = 1, frameLength = 0.2, nextAnimation = "m-e2" },
+        { name = "m-e2", x = 96, y = 0, mirrorX = true,
+          frameCount = 3, frameLength = 0.2, nextAnimation = "m-e" }
     }
 }
+
