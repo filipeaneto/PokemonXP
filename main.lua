@@ -24,6 +24,7 @@ require("lua/imagebank")
 require("lua/sprite")
 require("lua/object")
 require("lua/game")
+require("lua/map")
 
 function love.load()
     -- Variaveis globais importantes
@@ -40,8 +41,9 @@ function love.load()
     -- collectgarbage("stop")
     
     -- inicializa o mapa
-    local chunk = love.filesystem.load("data/map/pallet.map")
-    chunk() -- mudar para .events
+--    local chunk = love.filesystem.load("data/map/pallet.map")
+--    chunk() -- mudar para .events
+    xpMap = Map("pallet.map")
 
     --local abra = Sprite("default32_movement5.spr", "pokemon/063_movement.png")
     local hero = Sprite("hero.spr")
@@ -55,9 +57,9 @@ function love.load()
     player:setMovement("d", Vec2(1, 0), "m-e", "i-e")
     
     xpPlayer = player
-    
-    xpMap.back  = love.graphics.newImage("data/image/pallet.png")
-    xpMap.front1 = love.graphics.newImage("data/image/palletf1.png")
+
+--    xpMap.back  = love.graphics.newImage("data/image/pallet.png")
+--    xpMap.front1 = love.graphics.newImage("data/image/palletf1.png")
     
     debugDt = 0
 end
@@ -74,7 +76,8 @@ function love.update(dt)
 end
 
 function love.draw()
-    love.graphics.draw(xpMap.back, 0, 0)
+    --love.graphics.draw(xpMap.back, 0, 0)
+    xpMap:drawBack()
 
     -- precisa ser mudado
     object:draw()

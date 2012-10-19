@@ -27,6 +27,7 @@ setmetatable(Game, {
         obj = {
             spritePath  = "data/sprite/",
             imagePath   = "data/image/",
+            mapPath     = "data/map/",
             
             grid        = Vec2(16, 16),
             
@@ -64,6 +65,7 @@ end
 
 function Game:getSpritePath() return self.spritePath end
 function Game:getImagePath() return self.imagePath end
+function Game:getMapPath() return self.mapPath end
 
 function Game:getGrid() return self.grid end
 

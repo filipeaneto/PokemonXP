@@ -26,19 +26,11 @@ Sprite = {}
 -- Constructor
 setmetatable(Sprite, {
     __call = function(table, filename, imageFilename)
-        print("creating: sprite: " .. filename)
         local chunk = love.filesystem.load(xpGame:getSpritePath() .. filename)
         local spriteData = chunk()
 
         spriteData.imageFilename = imageFilename or spriteData.imageFilename
 
-        if xpImageBank[spriteData.imageFilename] == nil then
-            print("imageBank: "..spriteData.imageFilename.." missing")
-            print("image: "..spriteData.imageFilename.." opened")
-        else
-            print("imageBank: "..spriteData.imageFilename.." is already opened")
-            print("image: "..spriteData.imageFilename.." loaded")
-        end
 
         local image = xpImageBank[spriteData.imageFilename] or
                         love.graphics.newImage(xpGame:getImagePath() ..
