@@ -65,22 +65,31 @@ function love.load()
 end
 
 function love.update(dt)
+    xpGame:update(dt)
+
     debugDt = debugDt + dt
     if debugDt > 1 then
         xpGame:updateDebug(dt)
         debugDt = 0
     end
-
-    xpGame:update(dt)
-    xpPlayer:update(dt) -- tá muito lento (?)
+    
+    if xpContext then
+        xpContext.update(dt)
+    else
+        xpPlayer:update(dt) -- tá muito lento (?)
+    end
 end
 
 function love.draw()
     --love.graphics.draw(xpMap.back, 0, 0)
-    xpMap:drawBack()
 
-    -- precisa ser mudado
-    object:draw()
+    if xpContext then
+        xpContext.draw()
+    else
+        -- precisa ser mudado
+        xpMap:drawBack()
+        object:draw()
+    end
     
     -- love.graphics.draw(xpMap.front, 0, 0)
 
@@ -103,7 +112,9 @@ function love.keypressed(key, unicode)
         love.event.quit()
 --    elseif key == "g" then
 --        collectgarbage()
-    else
+    end
+    
+    if xpContext == nil then
         xpPlayer:keyPressed(key)
     end
 end

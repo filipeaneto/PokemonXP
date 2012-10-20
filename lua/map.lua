@@ -18,6 +18,8 @@
    along with PokémonXP. If not, see <http://www.gnu.org/licenses/>.
 ]]
 
+require("lua/maptransition")
+
 Map = {}
 
 setmetatable(Map, {
@@ -35,11 +37,11 @@ setmetatable(Map, {
                                                mapData.backImage)
 
         local i, img = 1, "frontImage1"
-        
+
         while mapData[img] do
             obj[img] = love.graphics.newImage(xpGame:getImagePath()..
                                               mapData[img])
-            
+
             i = i + 1
             img = "frontImage"..tostring(i)
         end
@@ -49,8 +51,8 @@ setmetatable(Map, {
     end
 })
 
-function Map:drawBack()
-    love.graphics.draw(self.backImage, 0, 0)
+function Map:drawBack(x, y)
+    love.graphics.draw(self.backImage, x or 0, y or 0)
 end
 
 function Map:drawFront(y, x)
@@ -59,4 +61,13 @@ function Map:drawFront(y, x)
         love.graphics.draw(self["frontImage"..tostring(i)], 0, 0)
     end
 end
+
+function Map.Transition(filename, mode, args)
+    maptransition.map = Map(filename)
+    maptransition.mode = mode
+    maptransition.args = args
+
+    xpContext = maptransition.load()
+end
+
 
