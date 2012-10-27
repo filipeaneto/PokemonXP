@@ -18,114 +18,95 @@
    along with PokémonXP. If not, see <http://www.gnu.org/licenses/>.
 ]]
 
-require("lua/game")
-require("lua/animation")
-require("math")
+require "lua/animation"
+require "lua/updatable"
+require "lua/drawable"
+require "lua/type"
+require "lua/game"
 
 Sprite = {}
--- Constructor
-setmetatable(Sprite, {
-    __call = function(table, filename, imageFilename)
-        local chunk = love.filesystem.load(xpGame:getSpritePath() .. filename)
-        local spriteData = chunk()
 
-        spriteData.imageFilename = imageFilename or spriteData.imageFilename
+Type(Sprite, Drawable, Updatable, function(sprite, filename, imageFilename) 
 
-
-        local image = xpImageBank[spriteData.imageFilename] or
-                        love.graphics.newImage(xpGame:getImagePath() ..
-                                               spriteData.imageFilename)
-
-        xpImageBank[spriteData.imageFilename] = image
-
-
-        local obj = {
-            image           = image,
-
-            animating       = spriteData.animating,
-            animation       = {},
-            currentAnimation= spriteData.animations[1].name,
-
-            rotateByPosition= spriteData.rotating,
-            rotation        = 0,
-
-            position        = Vec2(),
-            lastPosition    = Vec2(),
-
-            width           = spriteData.width,
-            height          = spriteData.height,
-
-            center          = {spriteData.width / 2, spriteData.height / 2}
-        }
-
-        for i = 1, #spriteData.animations do
-            local iAnimation = spriteData.animations[i]
-
-            obj.animation[iAnimation.name] =
-                Animation(image, iAnimation.x, iAnimation.y,
-                          { x = iAnimation.mirrorX, y = iAnimation.mirrorY },
-                          obj.width, obj.height,
-                          iAnimation.frameCount,
-                          iAnimation.frameLength,
-                          iAnimation.nextAnimation)
-        end
-
-        setmetatable(obj, { __index = Sprite })
-        return obj
+    -- abre o arquivo .spr ou .spt
+    local chunk = love.filesystem.load(SPRITE_PATH..filename)
+    local spriteData = chunk()
+    
+    -- verifica sobreescrita da imagem 
+    imageFilename = imageFilename or spriteData.imageFilename
+    assert(type(imageFilename) == "string", 
+           "Incorrect or missing parameter: expected image filename")
+    
+    -- recupera e atualiza o banco de imagens
+    local image = xp.imageBank[imageFilename] or
+                  love.graphics.newImage(IMAGE_PATH..imageFilename)              
+    xp.imageBank[imageFilename] = image
+    
+    -- metodos de inicialização dos supertipos não serão utilizados
+    -- preenche os demais atributos
+    sprite.image            = image                 -- userdata
+    sprite.imageFilename    = imageFilename         -- string
+    
+    sprite.posX             = 0                     -- number
+    sprite.posY             = 0                     -- number
+    
+    sprite.width            = spriteData.width      -- number
+    sprite.height           = spriteData.height     -- number
+            
+    local animations = {}
+    -- cria animações
+    for _, animData in ipairs(spriteData.animations) do
+    
+        local scaleX, scaleY = animData.scaleX or 1, animData.scaleY or 1
+        if animData.mirrorX then scaleX = -scaleX end
+        if animData.mirrorY then scaleY = -scaleY end
+    
+        animations[animData.name] = 
+            Animation(image, animData.x, animData.y,
+                      sprite.width, sprite.height,
+                      scaleX, scaleY,
+                      anim.frameCount, anim.frameLength)
     end
-})
-
-function Sprite:updateRotation()
-    if self.rotateByPosition then
-        rotation = math.atan2(position.y - lastPosition.y,
-                              position.x - lastPosition.x)
+    
+    -- atribui próxima animação
+    for _, animData in ipairs(spriteData.animations) do
+    
+        animations[animData.name]:
+            setNextAnimation(animations[animData.nextAnimation])
+    
     end
+    
+    sprite.animating        = spriteData.animating  -- boolean
+    _, sprite.animation     = next(animations)      -- Animation
+    sprite.animationByName  = animations            -- table
+    
+end)
+
+function Sprite:setPosition(x, y)
+    self.posX, self.posY = x, y
 end
 
-function Sprite:getCurrentAnimation()
-    return self.animation[self.currentAnimation]
+function Sprite:getPosition()
+    return self.posX, self.posY
 end
 
-function Sprite:setPosition(x, y, teleport)
-    local position
-    if y == nil then position = Vec2(x.x, x.y) else position = Vec2(x, y) end
-
-    self.lastPosition = self.position
-    self.position = position
-
-    if teleport == nil then self:updateRotation() end
-
-    return true
-end
-
-function Sprite:getPosition(cood)
-    if cood == nil then
-        return self.position
-    else
-        return self.position[cood]
-    end
-end
-
-function Sprite:setAnimation(animation)
-    self:getCurrentAnimation().playCount = 0
-    self.currentAnimation = animation
+function Sprite:setAnimation(animationName)
+    
+    self.animation:reset()
+    self.animation = self.animationByName(animationName)
+    
 end
 
 function Sprite:update(dt)
-    if self.animating then
-        local animation = self:getCurrentAnimation()
-        animation:update(dt)
 
-        if animation.nextAnimation ~= nil then
-            if animation.playCount > 0 then
-                animation.playCount = 0
-                self.currentAnimation = animation.nextAnimation
-            end
-        end
+    if self.animating then
+        self.animation:update(dt)
+        self.animation = self.animation:getNextAnimation()
     end
+    
 end
 
 function Sprite:draw()
-    self.animation[self.currentAnimation]:draw(self.position.x, self.position.y)
+    self.animation:draw(self.posX, self.posY)
 end
 

@@ -6,7 +6,10 @@ function ImageBank.__index(obj, key)
 end
 
 function ImageBank.__newindex(obj, key, value)
-    obj.count = obj.count + 1
+    
+    if not obj.images[key] then 
+        obj.count = obj.count + 1
+    end
     
     if obj.count > obj.max then
         obj.images = {}

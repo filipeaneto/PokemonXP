@@ -26,30 +26,30 @@ function isA(self, ctype)
     if self == ctype then return true end
     if getmetatable(self) == ctype then return true end
 
-    -- caso não seja, pode ser subtipo de ctype 
+    -- caso não seja, pode ser subtipo de ctype
     if not self._supertype then return false end
     for _, base in ipairs(self._supertype) do
         -- testa para cada supertipo
         if base:isA(ctype) then return true end
-    end  
+    end
 
     return false
-    
+
 end
 
 function Type(newType, opt, ...)
 
-    assert(type(newType) == "table", 
+    assert(type(newType) == "table",
            "Incorrect parameter type: expected table")
 
     -- se opt é uma tabela, esta será um supertipo de newType
     if type(opt) == "table" then
-        
+
         local supertype = opt
         for key, value in pairs(supertype) do
             -- copia todos as funções do supertipo
-            if type(supertype[key]) == "function" then 
-                newType[key] = value 
+            if type(supertype[key]) == "function" then
+                newType[key] = value
             end
         end
 
@@ -82,8 +82,8 @@ function Type(newType, opt, ...)
                 return inst
             end
         })
-    
+
     end
-    
+
 end
 
