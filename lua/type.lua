@@ -20,7 +20,7 @@
 
 require "table"
 
-function isA(self, ctype)
+function IsA(self, ctype)
 
     -- self pode ser uma instância de ctype ou pode ser ctype
     if self == ctype then return true end
@@ -30,7 +30,7 @@ function isA(self, ctype)
     if not self._supertype then return false end
     for _, base in ipairs(self._supertype) do
         -- testa para cada supertipo
-        if base:isA(ctype) then return true end
+        if base:IsA(ctype) then return true end
     end
 
     return false
@@ -73,7 +73,7 @@ function Type(newType, opt, ...)
 
         newType.__index = newType
 
-        if not newType._supertype then newType.isA = isA end
+        if not newType._supertype then newType.IsA = IsA end
 
         setmetatable(newType, {
             __call = function(_, ...)
@@ -82,7 +82,6 @@ function Type(newType, opt, ...)
                 return inst
             end
         })
-
     end
 
 end

@@ -1,5 +1,5 @@
 --[[
-   utils.lua
+   serializable.lua
    This file is part of PokémonXP
 
    Copyright (C) 2012 - Filipe Neto
@@ -18,19 +18,32 @@
    along with PokémonXP. If not, see <http://www.gnu.org/licenses/>.
 ]]
 
+require "Serial/compress"
+require "Serial/serial"
+require "lua/type"
 
-function math.round(n, deci)
-    deci = 10^(deci or 0)
-    return math.floor(n*deci+.5)/deci
+Serializable = {}
+
+Type(Serializable, function(serializable, typeName)
+
+    -- verifica se o nome do tipo é válido
+    assert(type(typeName) == "string" and _G[typeName].init,
+           "Incorrect or missing parameter: expected a complex type name")
+
+    serializable.serialType = typeName
+
+end)
+
+function Serializable:serialize(compressed)
+    error("Attempt to call unimplemented serialize function")
 end
 
-function ReadOnly(table)
-    return setmetatable({}, {
-        __index = table,
-        __newindex = function(_, key, value)
-            error "Attempt to modify read-only table"
-        end,
-        __metatable = false
-    })
+function Serializable.deserialize(data, compressed)
+    local t = -- blablabla(data)
+    -- bla bla bla
+
+    local typeName = t[1]
+
+    return _G[typeName](unpack(t, 2))
 end
 
