@@ -23,9 +23,9 @@ function cfuncnames( areas )
 
     return cfuncs
 end
-local cfuncsaved = cfuncnames()
+cfuncsaved = cfuncnames()
 
-function deserialized( data )
+function deserialize( data )
     assert( type( data ) == "string" )
     assert( loadstring( data ) )()
     return deserialize_()
@@ -139,4 +139,4 @@ function serialize( data, cfuncs )
     return table.concat( buffer )
 end
 
-deserialize( serialize( _G ) )
+-- deserialize( serialize( _G ) )

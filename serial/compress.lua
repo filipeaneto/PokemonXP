@@ -9,11 +9,11 @@
 --  Make numToBytes and bytesToNum not need a prepended length byte in the case of 1 length
 --  1 length is very common on shorter strings, and would greatly improve compression.
 
-local math_ceil, math_floor, math_log, string_byte, string_char, string_sub, table_concat =
+math_ceil, math_floor, math_log, string_byte, string_char, string_sub, table_concat =
       math.ceil, math.floor, math.log, string.byte, string.char, string.sub, table.concat
 
-local log256_ = math_log( 256 )
-local function numToBytes( n )
+log256_ = math_log( 256 )
+function numToBytes( n )
     local len = math_ceil( math_log( n + 1 ) / log256_ )
     local b = { string_char( len ) }
     for i = 2, len + 1 do
@@ -50,7 +50,7 @@ function compress( data )
     return table_concat( out )
 end
 
-local function bytesToNum( b )
+function bytesToNum( b )
     local n = 0
     local pow = 1
     for i = 1, #b do

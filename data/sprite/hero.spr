@@ -1,37 +1,36 @@
 return {
     imageFilename   = "hero.png",
 
-    rotating        = false,
     animating       = true,
 
     width           = 32,
     height          = 32,
 
     animations      = {
-        { name = "i-s", x = 32, y = 0, frameCount = 1 },
-        { name = "i-w", x = 128, y = 0, frameCount = 1 },
-        { name = "i-n", x = 224, y = 0, frameCount = 1 },
-        { name = "i-e", x = 128, y = 0, mirrorX = true, frameCount = 1 },
-          
-        { name = "m-s", x = 32, y = 0, frameCount = 1,
+        { name = "idle-south", x = 32, y = 0, frameCount = 1 },
+        { name = "idle-west", x = 128, y = 0, frameCount = 1 },
+        { name = "idle-north", x = 224, y = 0, frameCount = 1 },
+        { name = "idle-east", x = 128, y = 0, mirrorX = true, frameCount = 1 },
+
+        { name = "moving-south", x = 32, y = 0, frameCount = 1,
           frameLength = 0.2, nextAnimation = "m-s2" },
         { name = "m-s2", x = 0, y = 0, frameCount = 3,
-          frameLength = 0.2, nextAnimation = "m-s" },
+          frameLength = 0.2, nextAnimation = "moving-south" },
 
-        { name = "m-w", x = 128, y = 0, frameCount = 1,
+        { name = "moving-west", x = 128, y = 0, frameCount = 1,
           frameLength = 0.2, nextAnimation = "m-w2" },
         { name = "m-w2", x = 96, y = 0, frameCount = 3,
-          frameLength = 0.2, nextAnimation = "m-w" },
+          frameLength = 0.2, nextAnimation = "moving-west" },
 
-        { name = "m-n", x = 224, y = 0, frameCount = 1,
+        { name = "moving-north", x = 224, y = 0, frameCount = 1,
           frameLength = 0.2, nextAnimation = "m-n2" },
         { name = "m-n2", x = 192, y = 0, frameCount = 3,
-          frameLength = 0.2, nextAnimation = "m-n" },
+          frameLength = 0.2, nextAnimation = "moving-north" },
 
-        { name = "m-e", x = 128, y = 0, mirrorX = true,
+        { name = "moving-east", x = 128, y = 0, mirrorX = true,
           frameCount = 1, frameLength = 0.2, nextAnimation = "m-e2" },
         { name = "m-e2", x = 96, y = 0, mirrorX = true,
-          frameCount = 3, frameLength = 0.2, nextAnimation = "m-e" }
+          frameCount = 3, frameLength = 0.2, nextAnimation = "moving-east" }
     }
 }
 

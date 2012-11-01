@@ -18,32 +18,31 @@
    along with PokémonXP. If not, see <http://www.gnu.org/licenses/>.
 ]]
 
-require "Serial/compress"
-require "Serial/serial"
+require "serial/compress"
+require "serial/serial"
 require "lua/type"
 
 Serializable = {}
 
-Type(Serializable, function(serializable, typeName)
-
-    -- verifica se o nome do tipo é válido
-    assert(type(typeName) == "string" and _G[typeName].init,
-           "Incorrect or missing parameter: expected a complex type name")
-
-    serializable.serialType = typeName
+Type(Serializable,
+function(serializable)
 
 end)
 
 function Serializable:serialize(compressed)
-    error("Attempt to call unimplemented serialize function")
+    local serial = serialize(self)
+
+    if compressed then serial = compress(serial) end
+
+    return serial
 end
 
-function Serializable.deserialize(data, compressed)
-    local t = -- blablabla(data)
-    -- bla bla bla
+function Serializable:Deserialize(serial, compressed)
 
-    local typeName = t[1]
+    if compressed then serial = decompress(serial) end
+    serial = deserialize(serial)
 
-    return _G[typeName](unpack(t, 2))
+    return self(unpack(serial)) -- chama construtor do tipo
+
 end
 

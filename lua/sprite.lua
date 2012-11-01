@@ -18,6 +18,7 @@
    along with PokémonXP. If not, see <http://www.gnu.org/licenses/>.
 ]]
 
+require "lua/serializable"
 require "lua/animation"
 require "lua/updatable"
 require "lua/drawable"
@@ -26,8 +27,8 @@ require "lua/game"
 
 Sprite = {}
 
-Type(Sprite, Drawable, Updatable, function(sprite, filename, imageFilename,
-                                           posX, posY)
+Type(Sprite, Drawable, Updatable, Serializable,
+function(sprite, filename, posX, posY, imageFilename)
 
     -- abre o arquivo .spr ou .spt
     local chunk = love.filesystem.load(SPRITE_PATH..filename)
@@ -36,7 +37,7 @@ Type(Sprite, Drawable, Updatable, function(sprite, filename, imageFilename,
     -- verifica sobreescrita da imagem
     imageFilename = imageFilename or spriteData.imageFilename
     assert(type(imageFilename) == "string",
-           "Incorrect or missing parameter: expected image filename or nil")
+           "Incorrect or missing parameter: expected image filename")
 
     -- recupera e atualiza o banco de imagens
     local image = xp.imageBank[imageFilename] or
@@ -45,16 +46,16 @@ Type(Sprite, Drawable, Updatable, function(sprite, filename, imageFilename,
 
     -- funções de inicialização dos supertipos não serão utilizados
     -- preenche os demais atributos
-    sprite.filename         = filename
+    sprite.sprFilename         = filename
 
-    sprite.image            = image                 -- userdata
-    sprite.imageFilename    = imageFilename         -- string
+    sprite.sprImage            = image                 -- LÖVE Image
+    sprite.sprImageFilename    = imageFilename         -- string
 
-    sprite.posX             = posX or 0             -- number
-    sprite.posY             = posY or 0             -- number
+    sprite.sprPosX             = posX or 0             -- number
+    sprite.sprPosY             = posY or 0             -- number
 
-    sprite.width            = spriteData.width      -- number
-    sprite.height           = spriteData.height     -- number
+    sprite.sprWidth            = spriteData.width      -- number
+    sprite.sprHeight           = spriteData.height     -- number
 
     local animations = {}
     -- cria animações
@@ -66,9 +67,9 @@ Type(Sprite, Drawable, Updatable, function(sprite, filename, imageFilename,
 
         animations[animData.name] =
             Animation(image, animData.x, animData.y,
-                      sprite.width, sprite.height,
+                      sprite.sprWidth, sprite.sprHeight,
                       scaleX, scaleY,
-                      anim.frameCount, anim.frameLength)
+                      animData.frameCount, animData.frameLength)
     end
 
     -- atribui próxima animação
@@ -79,36 +80,49 @@ Type(Sprite, Drawable, Updatable, function(sprite, filename, imageFilename,
 
     end
 
-    sprite.animating        = spriteData.animating  -- boolean
-    _, sprite.animation     = next(animations)      -- Animation
-    sprite.animationByName  = animations            -- table
+    sprite.sprAnimating        = spriteData.animating  -- boolean
+    sprite.sprAnimationByName  = animations            -- table
+
+    local firstAnimName = spriteData.animations[1].name
+    sprite.sprAnimation = animations[firstAnimName]    -- Animation
 
 end)
 
 function Sprite:setPosition(x, y)
-    self.posX, self.posY = x, y
+    self.sprPosX, self.sprPosY = x, y
 end
 
 function Sprite:getPosition()
-    return self.posX, self.posY
+    return self.sprPosX, self.sprPosY
 end
 
 function Sprite:setAnimation(animationName)
 
-    self.animation:reset()
-    self.animation = self.animationByName(animationName)
+    self.sprAnimation:reset()
+    self.sprAnimation = self.sprAnimationByName[animationName]
 
 end
 
 function Sprite:update(dt)
 
-    if self.animating then
-        self.animation = self.animation:update(dt)
+    if self.sprAnimating then
+        -- atualiza a animação se necessário
+        self.sprAnimation = self.sprAnimation:update(dt)
     end
 
 end
 
 function Sprite:draw()
-    self.animation:draw(self.posX, self.posY)
+    self.sprAnimation:draw(self.sprPosX, self.sprPosY)
 end
 
+function Sprite:serialize(compressed)
+
+    return Serializable.serialize({
+        self.sprFilename,
+        self.sprPosX,
+        self.sprPosY,
+        self.sprImageFilename
+    }, compressed)
+
+end

@@ -63,13 +63,13 @@ function Type(newType, opt, ...)
     -- se opt é uma função, esta será sua função de inicialização
     elseif type(opt) == "function" then
 
-        newType.init = opt
+        newType.Init = opt
         Type(newType, ...)
 
     -- caso não haja mais opções, finalize o novo tipo
     elseif not opt then
 
-        assert(newType.init, "Attempt to create type without init function")
+        assert(newType.Init, "Attempt to create type without init function")
 
         newType.__index = newType
 
@@ -78,7 +78,7 @@ function Type(newType, opt, ...)
         setmetatable(newType, {
             __call = function(_, ...)
                 local inst = setmetatable({}, newType)
-                inst:init(...)
+                inst:Init(...)
                 return inst
             end
         })

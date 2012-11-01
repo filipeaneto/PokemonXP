@@ -21,6 +21,9 @@
 require("lua/utils")
 require("lua/vec2")
 
+SPRITE_PATH = "data/sprite/"
+IMAGE_PATH  = "data/image/"
+
 Game = {}
 setmetatable(Game, {
     __call = function(table)
