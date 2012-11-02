@@ -40,9 +40,7 @@ function(sprite, filename, posX, posY, imageFilename)
            "Incorrect or missing parameter: expected image filename")
 
     -- recupera e atualiza o banco de imagens
-    local image = xp.imageBank[imageFilename] or
-                  love.graphics.newImage(IMAGE_PATH..imageFilename)
-    xp.imageBank[imageFilename] = image
+    local image = xp.imageBank:open(IMAGE_PATH..imageFilename)
 
     -- funções de inicialização dos supertipos não serão utilizados
     -- preenche os demais atributos
