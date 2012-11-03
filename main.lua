@@ -18,6 +18,7 @@
    along with PokémonXP. If not, see <http://www.gnu.org/licenses/>.
 ]]
 
+require "lua/menucontext"
 require "lua/imagebank"
 require "lua/object"
 require "lua/config"
@@ -37,25 +38,28 @@ function love.load()
     -- Configurações e status do jogo
     -- TODO Abrir o usuário default ou o último utilizado, dentro do menu, o 
     --      jogador será capaz de trocar o usuário corrente
-    xp.config = Config()
-    xp.status = {}
+    xp.config       = Config()
+    xp.status       = {} -- TODO
+    xp.imageBank    = ImageBank()
+    xp.game         = Game()
+
+
+    -- TODO Atributos do jogo, serão preenchidos por outros contextos
+    xp.battleContext    = {}
+    xp.mapContext       = {}
+    xp.player           = {}
+    xp.map              = {}
 
     -- TODO Atributos do menu
-    xp.menuContext  = {} -- Será preenchido quando inicilizar o menu
-    xp.menu         = Menu() -- TODO
-
-    -- TODO Atributos do jogo, precarregados para o continuar
-    xp.battleContext    = {}                -- TODO
-    xp.mapContext       = {}                -- TODO
-    xp.imageBank        = ImageBank()
-    xp.player           = {}                -- TODO
-    xp.map              = {}                -- TODO deve ser preenchido por outro
-                                            --      contexto
-    xp.game             = Game()
-
-
-    -- Inicializa o contexto atual como o menu
-    xp.actualContext = xp.menuContext
+    xp.menuContext  = {}
+    xp.menu         = Menu()
+    -- Inicializa o contexto atual como o menu ou com o firstRun
+    if xp.config.firstRun then
+        xp.actualContext = FirstRunContext()
+    else
+        xp.menuContext = MenuContext()
+        xp.actualContext = xp.menuContext
+    end
 
     -- não esquecer de tirar o Debug na versão final
     debug = Debug()

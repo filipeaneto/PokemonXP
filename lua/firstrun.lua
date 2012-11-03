@@ -20,6 +20,7 @@
 
 require "string"
 
+require "lua/menucontext"
 require "lua/context"
 require "lua/type"
 
@@ -72,10 +73,14 @@ function FirstRunContext:keypressed(key, unicode)
         love.filesystem.mkdir(user)
         love.filesystem.write(user.."/config.cfg", "return {}\n")
 
-        -- reinicializa o config e o TODO status
-        xp.config = Config()
+        -- reinicializa o config, imageBank e o TODO status
+        xp.config       = Config()
+        xp.imageBank    = ImageBank()
+        xp.game         = Game()
+
         -- troca de contexto
-        xp.actualContext = MenuContext()
+        xp.menuContext = MenuContext()
+        xp.actualContext = xp.menuContext
 
     end
 

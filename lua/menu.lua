@@ -26,10 +26,59 @@ Menu = {}
 Type(Menu,
 function(menu)
 
-    if xp.config.firstRun then
-        xp.menuContext = FirstRunContext()
-        return
-    end
+    menu.pages = {
+        initial = {
+            { name = "New Game", action = function() love.event.quit() end },
+            { name = "Continue", action = function() love.event.quit() end },
+            { name = "Options" , action = "options" },
+            { name = "Quit"    , action = function() love.event.quit() end }
+        },
+
+        options = {
+            { name = "Back", action = "initial" }
+        }
+    }
+
+    menu.actualPage = "initial"
+    menu.actualItemIndex = 1
 
 end)
+
+-- simula o comportamento de next
+function Menu:itens()
+    return next, self.pages[self.actualPage]
+end
+
+function Menu:selected()
+    return self.actualItemIndex
+end
+
+function Menu:click()
+    local action = self.pages[self.actualPage][self.actualItemIndex].action
+
+    if type(action) == "function" then
+        action(self)
+    else
+        self.actualPage = action
+        self.actualItemIndex = 1
+    end
+end
+
+function Menu:up()
+    if self.actualItemIndex == 1 then
+        self.actualItemIndex = #self.pages[self.actualPage]
+    else
+        self.actualItemIndex = self.actualItemIndex - 1
+    end
+end
+
+function Menu:down()
+    local last = #self.pages[self.actualPage]
+
+    if self.actualItemIndex == last then
+        self.actualItemIndex = 1
+    else
+        self.actualItemIndex = self.actualItemIndex + 1
+    end
+end
 
