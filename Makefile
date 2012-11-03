@@ -1,13 +1,14 @@
 LUA := $(shell ls *.lua lua/*.lua serial/*.lua)
-SPRITE := $(shell ls data/sprite/*.spr data/sprite/*.spt)
-IMAGES := $(shell ls data/image/*.png)
+SPRITE := $(shell ls data/sprite/*.spr)
+IMAGE := $(shell ls data/image/*.png)
+MAP := $(shell ls data/map/*.map)
 
 all: release/PokemonXP.Windows.zip release/PokemonXP.love
 
 release/PokemonXP.love: $(LUA) release/data.zip
 	zip -r9 -FS release/PokemonXP.love *.lua data lua serial
 
-release/data.zip: $(SPRITE) $(IMAGES)
+release/data.zip: $(SPRITE) $(IMAGE) $(MAP)
 	zip -r9 -FS release/data.zip data
 
 release/PokemonXP.Windows.zip: release/.tmp/PokemonXP.exe

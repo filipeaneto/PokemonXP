@@ -18,41 +18,43 @@
    along with PokémonXP. If not, see <http://www.gnu.org/licenses/>.
 ]]
 
-require("lua/maptransition")
+require "lua/updatable"
+require "lua/drawable"
+require "lua/type"
+require "lua/game"
 
 Map = {}
 
-setmetatable(Map, {
-    __call = function(table, filename)
-        local chunk = love.filesystem.load(xpGame:getMapPath() .. filename)
-        local mapData = chunk()
+Type(Map, Drawable, Updatable,
+function(map, filename)
 
-        local obj = {
-            event       = mapData.event,
-            callback    = mapData.callback or {},
-            getName     = mapData.getName or function() return "No name." end
-        }
+    local chunk = love.filesystem.load(MAP_PATH..filename)
+    local mapData = chunk()
 
-        obj.backImage = love.graphics.newImage(xpGame:getImagePath()..
-                                               mapData.backImage)
+    map.event       = mapData.event
+    map.callback    = mapData.callback or {}
+    map.getName     = mapData.getName or function() return "Untitled" end
 
-        local i, img = 1, "frontImage1"
+    map.backImage   = xp.imageBank:open(mapData.backImage)
 
-        while mapData[img] do
-            obj[img] = love.graphics.newImage(xpGame:getImagePath()..
-                                              mapData[img])
+    -- carrega todas as front images
+    local i, img = 1, "frontImage1"
 
-            i = i + 1
-            img = "frontImage"..tostring(i)
-        end
+    while mapData[img] do
+        map[img] = xp.imageBank:open(mapData[img])
 
-        setmetatable(obj, { __index = Map })
-        return obj
+        i = i + 1
+        img = "frontImage"..tostring(i)
     end
-})
 
-function Map:drawBack(x, y)
-    love.graphics.draw(self.backImage, x or 0, y or 0)
+end)
+
+function Map:update(dt)
+
+end
+
+function Map:draw()
+    love.graphics.draw(self.backImage, 0, 0)
 end
 
 function Map:drawFront(y, x)
@@ -62,6 +64,7 @@ function Map:drawFront(y, x)
     end
 end
 
+--[[
 function Map.Transition(filename, mode, args)
     maptransition.map = Map(filename)
     maptransition.mode = mode
@@ -69,5 +72,5 @@ function Map.Transition(filename, mode, args)
 
     xpContext = maptransition.load()
 end
-
+]]
 

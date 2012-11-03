@@ -1,5 +1,5 @@
 --[[
-   serializable.lua
+   debug.lua
    This file is part of PokémonXP
 
    Copyright (C) 2012 - Filipe Neto
@@ -18,32 +18,41 @@
    along with PokémonXP. If not, see <http://www.gnu.org/licenses/>.
 ]]
 
-require "serial/compress"
-require "serial/serial"
-
+require "lua/updatable"
+require "lua/drawable"
+require "lua/utils"
 require "lua/type"
 
-Serializable = {}
+-- TODO pensar em um modo de mostrar o uso da CPU
+Debug = {}
 
-Type(Serializable,
-function(serializable)
+Type(Debug, Updatable, Drawable,
+function(debug, fps)
+
+    Updatable.Init(debug, fps or 1, Debug.updateDebug_)
+
+    debug.FPS = love.timer.getFPS()
+    debug.Mem = collectgarbage("count")
 
 end)
 
-function Serializable:serialize(compressed)
-    local serial = serialize(self)
+function Debug:updateDebug_()
 
-    if compressed then serial = compress(serial) end
+    self.FPS = love.timer.getFPS()
+    self.Mem = collectgarbage("count")
 
-    return serial
 end
 
-function Serializable:Deserialize(serial, compressed)
+function Debug:draw()
 
-    if compressed then serial = decompress(serial) end
-    serial = deserialize(serial)
+    love.graphics.print("FPS: "..self.FPS, 10, 10)
 
-    return self(unpack(serial)) -- chama construtor do tipo
+    mem = self.Mem
+    if mem > 1024 then
+        love.graphics.print("Memory: "..math.round(mem/1024, 1).." MB", 10, 25)
+    else
+        love.graphics.print("Memory: "..math.floor(mem).." KB", 10, 25)
+    end
 
 end
 

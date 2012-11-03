@@ -1,5 +1,5 @@
 --[[
-   serializable.lua
+   context.lua
    This file is part of PokémonXP
 
    Copyright (C) 2012 - Filipe Neto
@@ -18,32 +18,34 @@
    along with PokémonXP. If not, see <http://www.gnu.org/licenses/>.
 ]]
 
-require "serial/compress"
-require "serial/serial"
-
+require "lua/updatable"
+require "lua/drawable"
 require "lua/type"
 
-Serializable = {}
+Context = {}
 
-Type(Serializable,
-function(serializable)
+Type(Context, Updatable, Drawable, function() end)
 
-end)
-
-function Serializable:serialize(compressed)
-    local serial = serialize(self)
-
-    if compressed then serial = compress(serial) end
-
-    return serial
-end
-
-function Serializable:Deserialize(serial, compressed)
-
-    if compressed then serial = decompress(serial) end
-    serial = deserialize(serial)
-
-    return self(unpack(serial)) -- chama construtor do tipo
+function Context:mousepressed(x, y, button)
 
 end
 
+function Context:mousereleased(x, y, button)
+
+end
+
+function Context:keypressed(key, unicode)
+
+end
+
+function Context:keyreleased(key, unicode)
+
+end
+
+function Context:focus(focus)
+
+end
+
+function Context:quit()
+
+end

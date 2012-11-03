@@ -18,14 +18,15 @@
    along with PokémonXP. If not, see <http://www.gnu.org/licenses/>.
 ]]
 
+require "lua/game"
 require "lua/type"
 
 ImageBank = {}
 
 Type(ImageBank,
-function(imageBank, max)
+function(imageBank)
 
-    imageBank.ibkMax    = max or 1
+    imageBank.ibkMax    = xp.config.imageBankSize
     imageBank.ibkCount  = 0
     imageBank.ibkImages = {}
 
@@ -44,7 +45,7 @@ function ImageBank:open(name)
         self.ibkCount = 1
     end
 
-    self.ibkImages[name] = love.graphics.newImage(name)
+    self.ibkImages[name] = love.graphics.newImage(IMAGE_PATH..name)
 
     return self.ibkImages[name]
 

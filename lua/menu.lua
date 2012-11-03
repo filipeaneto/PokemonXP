@@ -1,5 +1,5 @@
 --[[
-   serializable.lua
+   menu.lua
    This file is part of PokémonXP
 
    Copyright (C) 2012 - Filipe Neto
@@ -18,32 +18,18 @@
    along with PokémonXP. If not, see <http://www.gnu.org/licenses/>.
 ]]
 
-require "serial/compress"
-require "serial/serial"
-
+require "lua/firstrun"
 require "lua/type"
 
-Serializable = {}
+Menu = {}
 
-Type(Serializable,
-function(serializable)
+Type(Menu,
+function(menu)
+
+    if xp.config.firstRun then
+        xp.menuContext = FirstRunContext()
+        return
+    end
 
 end)
-
-function Serializable:serialize(compressed)
-    local serial = serialize(self)
-
-    if compressed then serial = compress(serial) end
-
-    return serial
-end
-
-function Serializable:Deserialize(serial, compressed)
-
-    if compressed then serial = decompress(serial) end
-    serial = deserialize(serial)
-
-    return self(unpack(serial)) -- chama construtor do tipo
-
-end
 
