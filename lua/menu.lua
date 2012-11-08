@@ -28,7 +28,23 @@ function(menu)
 
     menu.pages = {
         initial = {
-            { name = "New Game", action = function() love.event.quit() end },
+            -- TODO fazer o menu
+            { name = "New Game", action = function()
+                -- TODO tirar daqui ###########
+                xp.map = Map("pallet.map")
+                xp.player = Player(Sprite("hero.spr"), 48, 4, 10, 10)
+                xp.player:setMovement("down", 0, '')
+                xp.player:setMovement("down" ,  0, 1,
+                                      "moving-south", "idle-south")
+                xp.player:setMovement("up"   ,  0,-1,
+                                      "moving-north", "idle-north")
+                xp.player:setMovement("left" , -1, 0,
+                                      "moving-west" , "idle-west")
+                xp.player:setMovement("right",  1, 0,
+                                      "moving-east" , "idle-east")
+                --#############################
+                xp.actualContext = xp.mapContext
+            end },
             { name = "Continue", action = function() love.event.quit() end },
             { name = "Options" , action = "options" },
             { name = "Quit"    , action = function() love.event.quit() end }

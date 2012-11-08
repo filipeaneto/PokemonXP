@@ -1,5 +1,5 @@
 --[[
-   menucontext.lua
+   mapcontext.lua
    This file is part of PokémonXP
 
    Copyright (C) 2012 - Filipe Neto
@@ -21,38 +21,23 @@
 require "lua/context"
 require "lua/type"
 
-MenuContext = {}
+MapContext = {}
 
-Type(MenuContext, Context)
+Type(MapContext, Context)
 
-function MenuContext:update(dt)
-
+function MapContext:update(dt)
+    xp.player:update(dt)
 end
 
-function MenuContext:draw()
-
-    love.graphics.print(xp.config.user, 550, 10)
-
-    local selected = xp.menu:selected()
-
-    for index, item in xp.menu:itens() do
-
-        if index == selected then
-            love.graphics.print(">", 10, 85 + index * 15)
-        end
-        love.graphics.print(item.name, 20, 85 + index * 15)
-
-    end
-
+function MapContext:draw()
+    xp.map:draw()
+    xp.player:draw()
 end
 
-function MenuContext:keyPressed(key, unicode)
-    if key == "return" then
-        xp.menu:click()
-    elseif key == "up" then
-        xp.menu:up()
-    elseif key == "down" then
-        xp.menu:down()
-    end
+function MapContext:keyPressed(key, unicode)
+    xp.player:keyPressed(key)
 end
 
+function MapContext:keyReleased(key, unicode)
+    xp.player:keyReleased(key)
+end

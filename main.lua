@@ -19,6 +19,7 @@
 ]]
 
 require "lua/menucontext"
+require "lua/mapcontext"
 require "lua/imagebank"
 require "lua/object"
 require "lua/config"
@@ -39,37 +40,31 @@ function love.load()
     -- TODO Abrir o usuário default ou o último utilizado, dentro do menu, o 
     --      jogador será capaz de trocar o usuário corrente
     xp.config       = Config()
-    xp.status       = {} -- TODO
-    xp.imageBank    = ImageBank()
-    xp.game         = Game()
 
 
     -- TODO Atributos do jogo, serão preenchidos por outros contextos
     xp.battleContext    = {}
-    xp.mapContext       = {}
+    xp.mapContext       = MapContext()
     xp.player           = {}
     xp.map              = {}
 
     -- TODO Atributos do menu
-    xp.menuContext  = {}
     xp.menu         = Menu()
+    xp.menuContext = MenuContext()
+
     -- Inicializa o contexto atual como o menu ou com o firstRun
     if xp.config.firstRun then
         xp.actualContext = FirstRunContext()
     else
-        xp.menuContext = MenuContext()
+        xp.status       = {} -- TODO
+        xp.imageBank    = ImageBank()
+        xp.game         = Game()
+
         xp.actualContext = xp.menuContext
     end
 
-    -- não esquecer de tirar o Debug na versão final
+    -- TODO não esquecer de tirar o Debug na versão final
     debug = Debug()
-    --    xp.map = Map("pallet.map")
-    --    player = Player(Sprite("hero.spr"), 48, 4, 10, 10)
-
-    --    player:setMovement("down" ,  0, 1, "moving-south", "idle-south")
-    --    player:setMovement("up"   ,  0,-1, "moving-north", "idle-north")
-    --    player:setMovement("left" , -1, 0, "moving-west" , "idle-west")
-    --    player:setMovement("right",  1, 0, "moving-east" , "idle-east")
 
 end
 
@@ -79,15 +74,12 @@ function love.update(dt)
     debug:update(dt)
 
     xp.actualContext:update(dt)
-    -- player:update(dt)
 
 end
 
 function love.draw()
 
     xp.actualContext:draw()
-    -- xp.map:draw()
-    -- player:draw()
 
     debug:draw()
     xp.game:wait()
@@ -96,30 +88,28 @@ end
 
 function love.mousepressed(x, y, button)
 
-    xp.actualContext:mousepressed(x, y, button)
+    xp.actualContext:mousePressed(x, y, button)
 
 end
 
 function love.mousereleased(x, y, button)
 
-    xp.actualContext:mousereleased(x, y, button)
+    xp.actualContext:mouseReleased(x, y, button)
 
 end
 
 function love.keypressed(key, unicode)
 
-    xp.actualContext:keypressed(key, unicode)
+    xp.actualContext:keyPressed(key, unicode)
 
     -- TODO que porquisse, tira isso daqui!
     if key == "escape" then love.event.quit() end
-    -- player:keyPressed(key)
 
 end
 
 function love.keyreleased(key, unicode)
 
-    xp.actualContext:keyreleased(key, unicode)
-    -- player:keyReleased(key)
+    xp.actualContext:keyReleased(key, unicode)
 
 end
 

@@ -79,7 +79,6 @@ function FirstRunContext:keypressed(key, unicode)
         xp.game         = Game()
 
         -- troca de contexto
-        xp.menuContext = MenuContext()
         xp.actualContext = xp.menuContext
 
     end

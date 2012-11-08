@@ -26,19 +26,19 @@ Context = {}
 
 Type(Context, Updatable, Drawable, function() end)
 
-function Context:mousepressed(x, y, button)
+function Context:mousePressed(x, y, button)
 
 end
 
-function Context:mousereleased(x, y, button)
+function Context:mouseReleased(x, y, button)
 
 end
 
-function Context:keypressed(key, unicode)
+function Context:keyPressed(key, unicode)
 
 end
 
-function Context:keyreleased(key, unicode)
+function Context:keyReleased(key, unicode)
 
 end
 
