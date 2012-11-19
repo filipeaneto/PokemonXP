@@ -76,6 +76,11 @@ function Player:keyReleased(key)
     end
 end
 
+function Player:releaseAll()
+    self.actualKey    = nil
+    self.nextKey      = nil
+end
+
 function Player:update(dt)
 
     local actual = self.actualKey

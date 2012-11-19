@@ -26,6 +26,8 @@ MapTransitionContext = {}
 Type(MapTransitionContext, Context,
 function(transition, mapFilename, option, arg1, arg2)
 
+    Context.Init(transition, "Map Transition")
+
     -- TODO mapBank
     transition.map = Map(mapFilename)
     transition.option = option
@@ -86,6 +88,7 @@ function MapTransitionContext:toNorthUpdate()
     else
         xp.map = self.map
         xp.actualContext = xp.mapContext
+        xp.player:releaseAll()
         xp.player:setPosition(self.playerX, self.playerY)
     end
 
