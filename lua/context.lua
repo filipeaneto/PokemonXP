@@ -24,7 +24,9 @@ require "lua/type"
 
 Context = {}
 
-Type(Context, Updatable, Drawable, function() end)
+Type(Context, Updatable, Drawable, function(context, name)
+    context.ctxName = name
+end)
 
 function Context:mousePressed(x, y, button)
 
@@ -48,4 +50,8 @@ end
 
 function Context:quit()
 
+end
+
+function Context:getName()
+    return self.ctxName or "not specified"
 end

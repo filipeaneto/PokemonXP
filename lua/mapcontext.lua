@@ -24,7 +24,10 @@ require "lua/type"
 
 MapContext = {}
 
-Type(MapContext, Context)
+Type(MapContext, Context,
+function(context)
+    Context.Init(context, "Map")
+end)
 
 function MapContext:update(dt)
     xp.player:update(dt)

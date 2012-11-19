@@ -54,5 +54,7 @@ function Debug:draw()
         love.graphics.print("Memory: "..math.floor(mem).." KB", 10, 25)
     end
 
+    love.graphics.print("Context: "..xp.actualContext:getName(), 10, 40)
+
 end
 

@@ -23,7 +23,10 @@ require "lua/type"
 
 MenuContext = {}
 
-Type(MenuContext, Context)
+Type(MenuContext, Context,
+function(context)
+    Context.Init(context, "menu")
+end)
 
 function MenuContext:update(dt)
 

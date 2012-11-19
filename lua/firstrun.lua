@@ -29,6 +29,7 @@ FirstRunContext = {}
 Type(FirstRunContext, Context,
 function(context)
 
+    Context.Init(context, "Fist Run")
     context.inputName = ""
 
 end)
