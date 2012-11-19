@@ -1,17 +1,15 @@
-DEPS := $(shell ls *.lua lua/*.lua)
+LUA := $(shell ls *.lua lua/*.lua serial/*.lua)
+SPRITE := $(shell ls data/sprite/*.spr)
+IMAGE := $(shell ls data/image/*.png)
+MAP := $(shell ls data/map/*.map)
 
 all: release/PokemonXP.Windows.zip release/PokemonXP.love
 
-release/PokemonXP.love: $(DEPS) release/data.zip
-	zip -r9 -FS release/PokemonXP.love *.lua data lua
-	
-release/data.zip: data
-	zip -r9 -FS release/data.zip data
+release/PokemonXP.love: $(LUA) release/data.zip
+	zip -r9 -FS release/PokemonXP.love *.lua data lua serial
 
-# aprender a gerar rpm
-#release/pokemonxp: release/PokemonXP.love
-#	@echo Generating binaries...
-#	@cat /usr/bin/love release/PokemonXP.love > release/pokemonxp
+release/data.zip: $(SPRITE) $(IMAGE) $(MAP)
+	zip -r9 -FS release/data.zip data
 
 release/PokemonXP.Windows.zip: release/.tmp/PokemonXP.exe
 	zip -j9 -FS release/PokemonXP.Windows.zip release/.tmp/*.dll release/.tmp/PokemonXP.exe readme.txt gpl.txt

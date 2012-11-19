@@ -1,88 +1,128 @@
 --[[
    maptransition.lua
    This file is part of PokémonXP
-  
+
    Copyright (C) 2012 - Filipe Neto
-  
+
    PokémonXP is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation; either version 2 of the License, or
    (at your option) any later version.
-  
+
    PokémonXP is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
-  
+
    You should have received a copy of the GNU General Public License
    along with PokémonXP. If not, see <http://www.gnu.org/licenses/>.
 ]]
 
-maptransition = {}
+require "lua/type"
+require "lua/map"
 
-function maptransition.load()
-    if maptransition.mode == "to north" then
-        maptransition.intY = maptransition.args.intY or 0
-        
-        maptransition.time = maptransition.args.time or 1
-        maptransition.dt = 0
-        
-        maptransition.newX = 0
-        maptransition.newY = (maptransition.intY * xpGame:getGrid().y) - 480
-        maptransition.oldX, maptransition.oldY = 0, 0
-        
-        -- precisa mudar
-        maptransition.playerX = object.posX - 1
-        maptransition.playerY = object.posY - 1
-        maptransition.destY = 30 - maptransition.intY - 1
-        
-        maptransition.args = nil
+MapTransitionContext = {}
+
+Type(MapTransitionContext, Context,
+function(transition, mapFilename, option, arg1, arg2)
+
+    Context.Init(transition, "Map Transition")
+
+    -- TODO mapBank
+    transition.map = Map(mapFilename)
+    transition.option = option
+    transition.dt = 0
+
+    -- duração da transição
+    transition.time = arg1 or 1
+    -- comprimento da intersecção dos mapas
+    transition.int  = arg2 or 1
+
+    -- sprite do personagem e posições
+    transition.sprite  = xp.player:getSprite()
+    transition.srcX, transition.srcY = transition.sprite:getPosition()
+
+    -- posição do player
+    transition.playerX, transition.playerY = xp.player:getPosition()
+
+    if option == "2north" then
+        -- funções de atualização e desenho
+        transition._update = MapTransitionContext.verticalUpdate
+        transition._draw   = MapTransitionContext.verticalDraw
+
+        -- inicializa posições dos mapas (evita operações com nil)
+        transition.oldY = 0
+        transition.newY = 0
+
+        -- posições finais do player
+        transition.playerY = transition.playerY + MAP_Y - transition.int - 1
+
+        -- passar a intersecção para as coordenadas de tela
+        -- calcular o ponto A (ponto de origem do novo mapa, apenas y do ponto)
+        transition.A = transition.int * GRID_Y - MAP_HEIGHT
+    elseif option == "2south" then
+        -- funções de atualização e desenho
+        transition._update = MapTransitionContext.verticalUpdate
+        transition._draw   = MapTransitionContext.verticalDraw
+
+        -- inicializa posições dos mapas (evita operações com nil)
+        transition.oldY = 0
+        transition.newY = 0
+
+        -- posições finais do player
+        transition.playerY = transition.playerY - MAP_Y + transition.int + 1
+
+        -- passar a intersecção para as coordenadas de tela
+        -- calcular o ponto A (ponto de origem do novo mapa, apenas y do ponto)
+        transition.A = MAP_HEIGHT - transition.int * GRID_Y
     end
 
-    return maptransition
+end)
+
+function MapTransitionContext:update(dt)
+
+    self.dt = self.dt + dt
+    self:_update()
+
 end
 
-function maptransition.update(dt)
-    maptransition.dt = maptransition.dt + dt
+function MapTransitionContext:draw()
+    self:_draw()
+end
 
-    if maptransition.mode == "to north" then
-        if maptransition.dt < maptransition.time then
-            maptransition.oldY = (480-(maptransition.intY*xpGame:getGrid().y)) * 
-                                 (maptransition.dt / maptransition.time)
-            maptransition.newY = (maptransition.intY * xpGame:getGrid().y) - 
-                                  480 + maptransition.oldY
+function MapTransitionContext:verticalUpdate()
 
-            object.sprite:setPosition(maptransition.playerX * xpGame:getGrid().x + 8,
-                maptransition.playerY * xpGame:getGrid().y + 8 +
-                (maptransition.destY * xpGame:getGrid().y - 
-                maptransition.playerY * xpGame:getGrid().y) *
-                (maptransition.dt / maptransition.time)) 
-                          
---            local y  = maptransition.playerY
---            local dY = maptransition.destY
---            
---            print(y, dY)
---            
---            y = y + math.floor((dY - y)*(maptransition.dt / maptransition.time))
---            
---            object:setPosition(Vec2(maptransition.playerX, y))
-        else
-            object:setPosition(Vec2(maptransition.playerX + 1, maptransition.destY + 1))
-            xpContext = maptransition.quit()
-        end
+    if self.dt < self.time then
+
+        -- modificador da altura
+        local dy = self.A * self.dt / self.time
+
+        self.oldY = self.A - dy
+        self.newY = -dy
+
+        self.sprite:setPosition(self.srcX, self.srcY - dy)
+    else
+        xp.map = self.map
+        xp.actualContext = xp.mapContext
+        xp.player:setPosition(self.playerX, self.playerY)
     end
+
 end
 
+function MapTransitionContext:verticalDraw()
 
-function maptransition.draw()
-    maptransition.map:drawBack(maptransition.newX, maptransition.newY)
-    xpMap:drawBack(maptransition.oldX, maptransition.oldY)
-    -- precisa mudar
-    object.sprite:draw()
+    self.map:draw(0, self.newY)
+    xp.map:draw(0, self.oldY)
+
+    self.sprite:draw()
+
 end
 
-function maptransition.quit()
-    xpMap = maptransition.map
-    
-    return nil
+function MapTransitionContext:keyPressed(key, unicode)
+    xp.player:keyPressed(key)
 end
+
+function MapTransitionContext:keyReleased(key, unicode)
+    xp.player:keyReleased(key)
+end
+

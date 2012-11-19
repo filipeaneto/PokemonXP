@@ -1,30 +1,30 @@
-List = {}
+Deque = {}
 
-setmetatable(List, {
+setmetatable(Deque, {
     __call = function(table)
         obj = { first = 0, last = -1 }
-        setmetatable(obj, { __index = List })
+        setmetatable(obj, { __index = Deque })
         return obj
     end
 })
 
-function List:pushLeft (value)
+function Deque:pushLeft (value)
   local first = self.first - 1
   self.first = first
   self[first] = value
 end
 
-function List:pushRight (value)
+function Deque:pushRight (value)
   local last = self.last + 1
   self.last = last
   self[last] = value
 end
 
-function List:isEmpty()
+function Deque:isEmpty()
    return self.first > self.last 
 end
 
-function List:popLeft ()
+function Deque:popLeft ()
   local first = self.first
   if first > self.last then error("list is empty") end
   local value = self[first]
@@ -33,7 +33,7 @@ function List:popLeft ()
   return value
 end
 
-function List:popRight ()
+function Deque:popRight ()
   local last = self.last
   if self.first > last then error("list is empty") end
   local value = self[last]
