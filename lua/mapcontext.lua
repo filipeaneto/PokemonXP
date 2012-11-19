@@ -39,6 +39,8 @@ function MapContext:draw()
 end
 
 function MapContext:keyPressed(key, unicode)
+    xp.player
+    xp.player
     xp.player:keyPressed(key)
 end
 
