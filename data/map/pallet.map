@@ -415,7 +415,7 @@ function map.callback.w() return false end
 function map.callback.u()
 --  TODO escolher o mapa certo
 --  parâmetros (mapa, direção, tempo, intersecção)
-    xp.actualContext = MapTransitionContext("pallet.map", "to north", 10, 7)
+    xp.actualContext = MapTransitionContext("pallet.map", "2north", 1.5, 10)
 end
 
 function map.getName() return "Pallet Town" end

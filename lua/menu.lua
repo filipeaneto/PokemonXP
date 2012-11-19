@@ -32,7 +32,7 @@ function(menu)
             { name = "New Game", action = function()
                 -- TODO tirar daqui ###########
                 xp.map = Map("pallet.map")
-                xp.player = Player(Sprite("hero.spr"), 48, 4, 10, 10)
+                xp.player = Player(Sprite("hero.spr"), 64, 4, 10, 10)
                 xp.player:setMovement("down", 0, '')
                 xp.player:setMovement("down" ,  0, 1,
                                       "moving-south", "idle-south")

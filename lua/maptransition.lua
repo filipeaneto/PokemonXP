@@ -33,31 +33,48 @@ function(transition, mapFilename, option, arg1, arg2)
     transition.option = option
     transition.dt = 0
 
-    if option == "to north" then
-        -- duração da transição
-        transition.time = arg1 or 1
-        -- comprimento da intersecção dos mapas
-        transition.int  = arg2 or 1
+    -- duração da transição
+    transition.time = arg1 or 1
+    -- comprimento da intersecção dos mapas
+    transition.int  = arg2 or 1
 
+    -- sprite do personagem e posições
+    transition.sprite  = xp.player:getSprite()
+    transition.srcX, transition.srcY = transition.sprite:getPosition()
+
+    -- posição do player
+    transition.playerX, transition.playerY = xp.player:getPosition()
+
+    if option == "2north" then
         -- funções de atualização e desenho
-        transition._update = MapTransitionContext.toNorthUpdate
-        transition._draw   = MapTransitionContext.toNorthDraw
+        transition._update = MapTransitionContext.verticalUpdate
+        transition._draw   = MapTransitionContext.verticalDraw
 
-        -- sprite do personagem e posições
-        transition.sprite  = xp.player:getSprite()
-        transition.destX, transition.srcY = transition.sprite:getPosition()
-        transition.destY = transition.srcY + (MAP_Y - transition.int - 1) * GRID_Y
-
-        -- posições dos mapas
+        -- inicializa posições dos mapas (evita operações com nil)
         transition.oldY = 0
         transition.newY = 0
 
         -- posições finais do player
-        transition.playerX, transition.playerY = xp.player:getPosition()
         transition.playerY = transition.playerY + MAP_Y - transition.int - 1
 
         -- passar a intersecção para as coordenadas de tela
-        transition.int  = transition.int * GRID_Y
+        -- calcular o ponto A (ponto de origem do novo mapa, apenas y do ponto)
+        transition.A = transition.int * GRID_Y - MAP_HEIGHT
+    elseif option == "2south" then
+        -- funções de atualização e desenho
+        transition._update = MapTransitionContext.verticalUpdate
+        transition._draw   = MapTransitionContext.verticalDraw
+
+        -- inicializa posições dos mapas (evita operações com nil)
+        transition.oldY = 0
+        transition.newY = 0
+
+        -- posições finais do player
+        transition.playerY = transition.playerY - MAP_Y + transition.int + 1
+
+        -- passar a intersecção para as coordenadas de tela
+        -- calcular o ponto A (ponto de origem do novo mapa, apenas y do ponto)
+        transition.A = MAP_HEIGHT - transition.int * GRID_Y
     end
 
 end)
@@ -73,33 +90,39 @@ function MapTransitionContext:draw()
     self:_draw()
 end
 
-function MapTransitionContext:toNorthUpdate()
+function MapTransitionContext:verticalUpdate()
 
     if self.dt < self.time then
 
-        -- tempo relativo
-        local relTime = self.dt / self.time
+        -- modificador da altura
+        local dy = self.A * self.dt / self.time
 
-        self.oldY = (480 - self.int) * relTime
-        self.newY = self.int - 480 + self.oldY
+        self.oldY = self.A - dy
+        self.newY = -dy
 
-        self.sprite:setPosition(self.destX,
-                                self.srcY + (self.destY - self.srcY) * relTime)
+        self.sprite:setPosition(self.srcX, self.srcY - dy)
     else
         xp.map = self.map
         xp.actualContext = xp.mapContext
-        xp.player:releaseAll()
         xp.player:setPosition(self.playerX, self.playerY)
     end
 
 end
 
-function MapTransitionContext:toNorthDraw()
+function MapTransitionContext:verticalDraw()
 
-    self.map:draw(self.newX, self.newY)
-    xp.map:draw(self.oldX, self.oldY)
+    self.map:draw(0, self.newY)
+    xp.map:draw(0, self.oldY)
 
     self.sprite:draw()
 
+end
+
+function MapTransitionContext:keyPressed(key, unicode)
+    xp.player:keyPressed(key)
+end
+
+function MapTransitionContext:keyReleased(key, unicode)
+    xp.player:keyReleased(key)
 end
 

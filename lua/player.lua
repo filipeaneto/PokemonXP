@@ -83,18 +83,18 @@ end
 
 function Player:update(dt)
 
-    local actual = self.actualKey
+    local actualKey = self.actualKey
 
     -- primeiro atualiza como se fosse um object
     Object.update(self, dt)
 
     -- se tem alguma tecla pressionada
-    if actual then
+    if actualKey then
 
         -- e o objeto não está se movendo, adiciona o movimento
         if not self.objIsMoving then
-            local x, y = unpack(self.movement[actual])
-            local animation = self.mAnimation[actual]
+            local x, y = unpack(self.movement[actualKey])
+            local animation = self.mAnimation[actualKey]
 
             self:move(x, y, animation)
         end
