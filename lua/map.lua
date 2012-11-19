@@ -53,8 +53,8 @@ function Map:update(dt)
 
 end
 
-function Map:draw()
-    love.graphics.draw(self.backImage, 0, 0)
+function Map:draw(x, y)
+    love.graphics.draw(self.backImage, x, y)
 end
 
 function Map:drawFront(y, x)

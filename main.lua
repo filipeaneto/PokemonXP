@@ -37,10 +37,10 @@ function love.load()
     xp = {}
 
     -- Configurações e status do jogo
-    -- TODO Abrir o usuário default ou o último utilizado, dentro do menu, o 
+    -- TODO Abrir o usuário default ou o último utilizado, dentro do menu, o
     --      jogador será capaz de trocar o usuário corrente
     xp.config       = Config()
-
+    xp.game         = Game()
 
     -- TODO Atributos do jogo, serão preenchidos por outros contextos
     xp.battleContext    = {}
@@ -58,7 +58,6 @@ function love.load()
     else
         xp.status       = {} -- TODO
         xp.imageBank    = ImageBank()
-        xp.game         = Game()
 
         xp.actualContext = xp.menuContext
     end
@@ -102,7 +101,7 @@ function love.keypressed(key, unicode)
 
     xp.actualContext:keyPressed(key, unicode)
 
-    -- TODO que porquisse, tira isso daqui!
+    -- TODO que porquice, tira isso daqui!
     if key == "escape" then love.event.quit() end
 
 end

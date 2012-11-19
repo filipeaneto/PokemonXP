@@ -23,8 +23,14 @@ require "lua/type"
 ----------------
 -- Constantes --
 ----------------
+MAP_WIDTH   = 640
+MAP_HEIGHT  = 480
+
 GRID_X      = 16
 GRID_Y      = GRID_X
+
+MAP_X       = MAP_WIDTH  / GRID_X
+MAP_Y       = MAP_HEIGHT / GRID_Y
 
 SPRITE_PATH = "data/sprite/"
 IMAGE_PATH  = "data/image/"

@@ -18,6 +18,7 @@
    along with PokémonXP. If not, see <http://www.gnu.org/licenses/>.
 ]]
 
+require "lua/maptransition"
 require "lua/context"
 require "lua/type"
 
@@ -41,3 +42,4 @@ end
 function MapContext:keyReleased(key, unicode)
     xp.player:keyReleased(key)
 end
+

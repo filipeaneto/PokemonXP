@@ -47,7 +47,7 @@ end
 
 -- TODO * permitir outros caracteres e tornar multiplataforma
 --      * repetição da tecla (segurar a tecla)
-function FirstRunContext:keypressed(key, unicode)
+function FirstRunContext:keyPressed(key, unicode)
 
     -- 0-9 => 48-57; A-Z => 97-122; backspace => 8; enter => 13
 

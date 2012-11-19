@@ -140,9 +140,19 @@ function Object:setPosition(x, y)
     self.objPosY = y
 
     -- atualiza a posição do sprite
-    sprite:setPosition(GRID_X/2 + GRID_X * (x - 1),
-                       GRID_Y/2 + GRID_Y * (y - 1))
+    self.objSprite:setPosition(GRID_X/2 + GRID_X * (x - 1),
+                               GRID_Y/2 + GRID_Y * (y - 1))
 
+    self.objDestPosition = Vec2(self.objSprite:getPosition()) -- Vec2
+
+end
+
+function Object:getPosition()
+    return self.objPosX, self.objPosY
+end
+
+function Object:getSprite()
+    return self.objSprite
 end
 
 function Object:serialize(compressed)
